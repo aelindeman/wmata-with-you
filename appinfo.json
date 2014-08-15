@@ -1,0 +1,91 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        "location"
+    ],
+    "companyName": "Alex Lindeman",
+    "longName": "WMATA With You",
+    "projectType": "pebblejs",
+    "resources": {
+        "media": [
+            {
+                "file": "images/menu_icon.png",
+                "name": "IMAGE_MENU_ICON",
+                "type": "png"
+            },
+            {
+                "file": "images/logo_splash.png",
+                "name": "IMAGE_LOGO_SPLASH",
+                "type": "png"
+            },
+            {
+                "file": "images/tile_splash.png",
+                "name": "IMAGE_TILE_SPLASH",
+                "type": "png"
+            },
+            {
+                "file": "fonts/UbuntuMono-Regular.ttf",
+                "name": "MONO_FONT_14",
+                "type": "font"
+            },
+            {
+                "file": "images/yl.png",
+                "name": "IMAGES_YL_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/sv.png",
+                "name": "IMAGES_SV_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/rd.png",
+                "name": "IMAGES_RD_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/or.png",
+                "name": "IMAGES_OR_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/metro.png",
+                "menuIcon": true,
+                "name": "IMAGES_METRO_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/location.png",
+                "name": "IMAGES_LOCATION_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/info.png",
+                "name": "IMAGES_INFO_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/incidents.png",
+                "name": "IMAGES_INCIDENTS_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/gr.png",
+                "name": "IMAGES_GR_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/bl.png",
+                "name": "IMAGES_BL_PNG",
+                "type": "png"
+            }
+        ]
+    },
+    "shortName": "Metro",
+    "uuid": "59b60dc7-51ff-46af-90f8-5d63c3237487",
+    "versionCode": 1,
+    "versionLabel": "0.9",
+    "watchapp": {
+        "watchface": false
+    }
+}
