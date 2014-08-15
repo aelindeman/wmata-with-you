@@ -72,6 +72,7 @@ function distance (x1, y1, x2, y2)
  */
 function determine_location()
 {
+	console.log('Attempting to determine location');
 	navigator.geolocation.getCurrentPosition(load_closest_station);
 }
 
@@ -98,8 +99,7 @@ function load_closest_station (position)
 				closest = data.Stations[s];
 			}
 		}
-		console.log('determined that closest station is ' + closest.Name);
-		data = null;
+		console.log('closest station is ' + closest.Name);
 		load_trains(closest);
 	}, function (error) {
 		console.log('Error getting closest station: ' + error);
@@ -133,7 +133,6 @@ function load_lines()
 	}
 	lines_list.on('select', function (e)
 	{
-		lines = null;
 		load_stations(e.item.line);
 	});
 }
@@ -152,15 +151,27 @@ function load_stations (line)
 		url: wmata_stations_url + '?LineCode=' + line + '&api_key=' + wmata_api_key,
 		type: 'json'
 	}, function (data) {
-		for (var s in data.Stations)
+		if (data.Stations.length > 0)
 		{
-			console.log(s + '\t' + data.Stations[s].Name);
-			stations_list.item(0, s, { title: data.Stations[s].Name });
+			for (var s in data.Stations)
+			{
+				console.log(s + '\t' + data.Stations[s].Name);
+				stations_list.item(0, s, { title: data.Stations[s].Name });
+			}
+			stations_list.on('select', function (e) {
+				load_trains(data.Stations[e.itemIndex]);
+			});
 		}
-		stations_list.on('select', function (e) {
-			data = null;
-			load_trains(data.Stations[e.itemIndex]);
-		});
+		else
+		{
+			var card = new UI.Card({
+				title: tr_line(line) + ' Line',
+				body: 'No stations are on this line.',
+				scrollable: true
+			});
+			stations_list.hide();
+			card.show();
+		}
 	}, function (error) {
 		var card = new UI.Card({
 			title: 'Error',
@@ -190,35 +201,20 @@ function load_trains(station)
 		if (data.Trains.length > 0)
 		{
 			console.log(data.Trains.length + ' trains');
+			var added = 0;
 			for (var t in data.Trains)
 			{
 				console.log(data.Trains[t].Min + '\t' + data.Trains[t].Line + '\t' + data.Trains[t].DestinationName);
-
-				if (data.Trains[t].DestinationName == 'No Passenger') continue;
-
-				var label = '';
-				var icon = 'images/';
-				switch (data.Trains[t].DestinationName)
-				{
-					case 'Special':
-						label = 'Special train';
-						break;
-					case 'Train':
-						label = 'Train';
-						break;
-					default:
-						label = 'to ' + data.Trains[t].DestinationName;
-						icon += data.Trains[t].Line.toLowerCase() + '.png';
-						break;
-				}
-				trains_list.item(0, t, {
-					title: tr_time(data.Trains[t].Min),
-					subtitle: label,
-					icon: icon
-				});
+				if (data.Trains[t].DestinationName == 'No Passenger')
+					continue;
+				else if (data.Trains[t].DestinationName == 'Train')
+					trains_list.item(0, added, { title: tr_time(data.Trains[t].Min), subtitle: 'Train' });
+				else
+					trains_list.item(0, added, { title: tr_time(data.Trains[t].Min), subtitle: 'to ' + data.Trains[t].DestinationName, icon: 'images/' + data.Trains[t].Line.toLowerCase() + '.png' });
+				
+				added ++;
 			}
 			trains_list.on('select', function (e) {
-				data = null;
 				trains_list.hide();
 				load_trains(station);
 			});
@@ -230,7 +226,6 @@ function load_trains(station)
 				body: 'No trains are currently scheduled to stop at this station.',
 				scrollable: true
 			});
-			data = null;
 			trains_list.hide();
 			card.show();
 		}
@@ -271,7 +266,6 @@ function load_incidents()
 		{
 			card.body('There are no incidents.');
 		}
-		data = null;
 		card.show();
 	}, function (error) {
 		console.log('Error getting incidents: ' + error);
@@ -318,7 +312,6 @@ main.on('select', function (e) {
 	switch (e.itemIndex)
 	{
 		case 0:
-			console.log('Attempting to determine location');
 			determine_location();
 			break;
 		case 1:
