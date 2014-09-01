@@ -29,23 +29,28 @@
                 "type": "font"
             },
             {
-                "file": "images/yl.png",
-                "name": "IMAGES_YL_PNG",
+                "file": "images/bl.png",
+                "name": "IMAGES_BL_PNG",
                 "type": "png"
             },
             {
-                "file": "images/sv.png",
-                "name": "IMAGES_SV_PNG",
+                "file": "images/gr.png",
+                "name": "IMAGES_GR_PNG",
                 "type": "png"
             },
             {
-                "file": "images/rd.png",
-                "name": "IMAGES_RD_PNG",
+                "file": "images/incidents.png",
+                "name": "IMAGES_INCIDENTS_PNG",
                 "type": "png"
             },
             {
-                "file": "images/or.png",
-                "name": "IMAGES_OR_PNG",
+                "file": "images/info.png",
+                "name": "IMAGES_INFO_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/location.png",
+                "name": "IMAGES_LOCATION_PNG",
                 "type": "png"
             },
             {
@@ -55,28 +60,23 @@
                 "type": "png"
             },
             {
-                "file": "images/location.png",
-                "name": "IMAGES_LOCATION_PNG",
+                "file": "images/or.png",
+                "name": "IMAGES_OR_PNG",
                 "type": "png"
             },
             {
-                "file": "images/info.png",
-                "name": "IMAGES_INFO_PNG",
+                "file": "images/rd.png",
+                "name": "IMAGES_RD_PNG",
                 "type": "png"
             },
             {
-                "file": "images/incidents.png",
-                "name": "IMAGES_INCIDENTS_PNG",
+                "file": "images/sv.png",
+                "name": "IMAGES_SV_PNG",
                 "type": "png"
             },
             {
-                "file": "images/gr.png",
-                "name": "IMAGES_GR_PNG",
-                "type": "png"
-            },
-            {
-                "file": "images/bl.png",
-                "name": "IMAGES_BL_PNG",
+                "file": "images/yl.png",
+                "name": "IMAGES_YL_PNG",
                 "type": "png"
             }
         ]

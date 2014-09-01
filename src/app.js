@@ -51,9 +51,30 @@ function concat_station_codes (s)
 	var code = s.Code;
 	if (s.StationTogether1 !== '') code += (',' + s.StationTogether1);
 	if (s.StationTogether2 !== '') code += (',' + s.StationTogether2);
-	
-	console.log('concatenated station ' + s.Name + ' as ' + code);
 	return code;
+}
+
+/*
+ * Concatenates `s`tations' lines into one string, and (optionally) `p`rettifies it.
+ */
+function concat_line_codes (s, p)
+{
+	var line = s.LineCode1;
+	if (p)
+	{
+		line = tr_line(line);
+		if (s.LineCode2) line += (", " + tr_line(s.LineCode2));
+		if (s.LineCode3) line += (", " + tr_line(s.LineCode3));
+		if (s.LineCode4) line += (", " + tr_line(s.LineCode4));
+	}
+	else
+	{
+		line = line.toLowerCase();
+		if (s.LineCode2) line += ("," + s.LineCode2.toLowerCase());
+		if (s.LineCode3) line += ("," + s.LineCode3.toLowerCase());
+		if (s.LineCode4) line += ("," + s.LineCode4.toLowerCase());
+	}
+	return line;
 }
 
 /*
@@ -73,14 +94,17 @@ function distance (x1, y1, x2, y2)
 function determine_location()
 {
 	console.log('Attempting to determine location');
-	navigator.geolocation.getCurrentPosition(load_closest_station);
+	navigator.geolocation.getCurrentPosition(load_closest_stations);
 }
 
 /*
- * Attempts to find which station is closest to `position`, and then shows a menu of trains going through that station.
+ * Finds the stations closest to the user's `position`.
  */
-function load_closest_station (position)
+function load_closest_stations (position)
 {
+	var stations_list = new UI.Menu({ sections: [{ title: 'Nearby stations', items: [{ title: 'Loading...'}] }] });
+	stations_list.show();
+	
 	var my_lat = position.coords.latitude;
 	var my_lon = position.coords.longitude;
 	
@@ -88,58 +112,29 @@ function load_closest_station (position)
 		url: wmata_stations_url + '?api_key=' + wmata_api_key,
 		type: 'json'
 	}, function (data) {
-		var station_dist = 180;
-		var closest;
-		for (var s in data.Stations)
-		{
-			var dist = distance(my_lat, my_lon, data.Stations[s].Lat, data.Stations[s].Lon);
-			if (dist < station_dist)
-			{
-				station_dist = dist;
-				closest = data.Stations[s];
-			}
-		}
-		console.log('closest station is ' + closest.Name);
-		load_trains(closest);
+		data.Stations.sort(function (a, b) {
+			return distance(my_lat, my_lon, a.Lat, a.Lon) - distance(my_lat, my_lon, b.Lat, b.Lon);
+		});
+		var max = 8; // maximum number of closest stations to list
+		for (var s = 0; s < max; s ++)
+			stations_list.item(0, s, { title: data.Stations[s].Name, subtitle: concat_line_codes(data.Stations[s], true) });
+		stations_list.on('select', function (e) {
+			load_trains(data.Stations[e.itemIndex]);
+		});
 	}, function (error) {
-		console.log('Error getting closest station: ' + error);
+		console.log('Error getting stations: ' + error);
 		var card = new UI.Card({
 			title: 'Error',
 			body: error
 		});
+		stations_list.hide();
 		card.show();
 	});
 }
 
 /*
- * Loads the list of rail lines into a menu.
- */
-function load_lines()
-{
-	console.log('Showing all lines');
-	
-	var lines_list = new UI.Menu({ sections: [{ items: [{ title: 'Loading...'}] }] });
-	lines_list.show();
-	
-	var lines = ['rd', 'or', 'yl', 'gr', 'bl', 'sv'];
-	
-	for (var l in lines)
-	{
-		lines_list.item (0, l, {
-			title: tr_line (lines[l]) + ' Line',
-			line: lines[l],
-			icon: 'images/' + lines[l] + '.png'
-		});
-	}
-	lines_list.on('select', function (e)
-	{
-		load_stations(e.item.line);
-	});
-}
-
-/*
  * Loads the stations on `line` into a menu.
- */
+
 function load_stations (line)
 {
 	console.log('Showing stations on ' + tr_line(line));
@@ -183,6 +178,7 @@ function load_stations (line)
 		card.show();
 	});
 }
+*/
 
 /*
  * Loads trains passing through `station` into a menu.
@@ -244,10 +240,11 @@ function load_trains(station)
 function load_incidents()
 {
 	var card = new UI.Card({
-		title: 'Incidents',
+		title: 'Advisories',
 		body: 'Loading...',
 		scrollable: true
 	});
+	card.show();
 	
 	new Ajax ({
 		url: wmata_incidents_url + '?api_key=' + wmata_api_key,
@@ -264,14 +261,13 @@ function load_incidents()
 		}
 		else
 		{
-			card.body('There are no incidents.');
+			card.body('There are no advisories.');
 		}
 		card.show();
 	}, function (error) {
-		console.log('Error getting incidents: ' + error);
+		console.log('Error getting advisories: ' + error);
 		card.title('Error');
 		card.body(error);
-		card.show();
 	});
 	
 	
@@ -293,13 +289,10 @@ function load_about()
 var main = new UI.Menu({
 	sections: [{
 		items: [{
-			title: 'Closest station',
+			title: 'Stations',
 			icon: 'images/location.png'
 		}, {
-			title: 'Pick a station',
-			icon: 'images/metro.png'
-		}, {
-			title: 'Incidents',
+			title: 'Advisories',
 			icon: 'images/incidents.png'
 		}, {
 			title: 'About',
@@ -315,12 +308,9 @@ main.on('select', function (e) {
 			determine_location();
 			break;
 		case 1:
-			load_lines();
-			break;
-		case 2:
 			load_incidents();
 			break;
-		case 3:
+		case 2:
 			load_about();
 			break;
 	}
