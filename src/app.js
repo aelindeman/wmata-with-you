@@ -93,7 +93,6 @@ function distance (x1, y1, x2, y2)
  */
 function determine_location()
 {
-	console.log('Attempting to determine location');
 	navigator.geolocation.getCurrentPosition(load_closest_stations);
 }
 
@@ -225,7 +224,7 @@ function load_about()
 {
 	var about_card = new UI.Card({
 		title: "About",
-		body: "WMATA With You 1.0\nby Alex Lindeman\nhttp://ael.me/\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.",
+		body: "WMATA With You\nversion 1.0\nby Alex Lindeman\nhttp://ael.me/\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.",
 		scrollable: true
 	});
 	about_card.show();
