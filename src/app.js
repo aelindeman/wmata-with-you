@@ -133,60 +133,10 @@ function load_closest_stations (position)
 }
 
 /*
- * Loads the stations on `line` into a menu.
-
-function load_stations (line)
-{
-	console.log('Showing stations on ' + tr_line(line));
-	
-	var stations_list = new UI.Menu({ sections: [{ title: tr_line(line) + ' Line', items: [{ title: 'Loading...'}] }] });
-	stations_list.show();
-	
-	new Ajax({
-		url: wmata_stations_url + '?LineCode=' + line + '&api_key=' + wmata_api_key,
-		type: 'json'
-	}, function (data) {
-		if (data.Stations.length > 0)
-		{
-			for (var s in data.Stations)
-			{
-				console.log(s + '\t' + data.Stations[s].Name);
-				stations_list.item(0, s, { title: data.Stations[s].Name });
-			}
-			stations_list.on('select', function (e) {
-				load_trains(data.Stations[e.itemIndex]);
-			});
-		}
-		else
-		{
-			var card = new UI.Card({
-				title: tr_line(line) + ' Line',
-				body: 'No stations are on this line.',
-				scrollable: true
-			});
-			stations_list.hide();
-			card.show();
-		}
-	}, function (error) {
-		var card = new UI.Card({
-			title: 'Error',
-			body: error,
-			scrollable: true
-		});
-		console.log('Error getting stations: ' + error);
-		stations_list.hide();
-		card.show();
-	});
-}
-*/
-
-/*
  * Loads trains passing through `station` into a menu.
  */
 function load_trains(station)
 {
-	console.log('Showing trains through ' + station.Name + ':');
-	
 	var trains_list = new UI.Menu({ sections: [{ title: station.Name, items: [{ title: 'Loading...' }] }] });
 	trains_list.show();
 	
@@ -196,11 +146,9 @@ function load_trains(station)
 	}, function (data) {
 		if (data.Trains.length > 0)
 		{
-			console.log(data.Trains.length + ' trains');
 			var added = 0;
 			for (var t in data.Trains)
 			{
-				console.log(data.Trains[t].Min + '\t' + data.Trains[t].Line + '\t' + data.Trains[t].DestinationName);
 				if (data.Trains[t].DestinationName == 'No Passenger')
 					continue;
 				else if (data.Trains[t].DestinationName == 'Train')
@@ -277,7 +225,7 @@ function load_about()
 {
 	var about_card = new UI.Card({
 		title: "About",
-		body: "WMATA With You 0.9 (beta)\nby Alex Lindeman\nhttp://ael.me/\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.",
+		body: "WMATA With You 1.0\nby Alex Lindeman\nhttp://ael.me/\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.",
 		scrollable: true
 	});
 	about_card.show();
