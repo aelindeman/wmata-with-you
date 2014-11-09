@@ -7,7 +7,7 @@
 var UI = require('ui');
 var Ajax = require('ajax');
 
-var wmata_api_key = 'tdzzks35mmn4qxjg9mxp324v';
+var wmata_api_key = 'tdzzks35mmn4qxjg9mxp324v&amp;subscription-key=tdzzks35mmn4qxjg9mxp324v';
 var wmata_stations_url = 'http://api.wmata.com/Rail.svc/json/JStations';
 var wmata_trains_url = 'http://api.wmata.com/StationPrediction.svc/json/GetPrediction/';
 var wmata_incidents_url = 'http://api.wmata.com/Incidents.svc/json/Incidents';
@@ -224,7 +224,7 @@ function load_about()
 {
 	var about_card = new UI.Card({
 		title: "About",
-		body: "WMATA With You\nversion 1.0\nby Alex Lindeman\nhttp://ael.me/\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.",
+		body: "WMATA With You\nversion 1.0.1\nby Alex Lindeman\nhttp://ael.me/\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.",
 		scrollable: true
 	});
 	about_card.show();
@@ -235,6 +235,7 @@ function load_about()
  */
 var main = new UI.Menu({
 	sections: [{
+		title: "WMATA With You",
 		items: [{
 			title: 'Stations',
 			icon: 'images/location.png'
