@@ -7,7 +7,7 @@
 var UI = require('ui');
 var Ajax = require('ajax');
 
-var wmata_api_key = 'tdzzks35mmn4qxjg9mxp324v&amp;subscription-key=tdzzks35mmn4qxjg9mxp324v';
+var wmata_api_key = 'tdzzks35mmn4qxjg9mxp324v&subscription-key=tdzzks35mmn4qxjg9mxp324v';
 var wmata_stations_url = 'http://api.wmata.com/Rail.svc/json/JStations';
 var wmata_trains_url = 'http://api.wmata.com/StationPrediction.svc/json/GetPrediction/';
 var wmata_incidents_url = 'http://api.wmata.com/Incidents.svc/json/Incidents';
@@ -49,8 +49,11 @@ function tr_line (line)
 function concat_station_codes (s)
 {
 	var code = s.Code;
-	if (s.StationTogether1 !== '') code += (',' + s.StationTogether1);
-	if (s.StationTogether2 !== '') code += (',' + s.StationTogether2);
+	/* Disabled concat code until stations are also concatenated in the stations
+	lists, so irrelevant trains don't appear for other platforms of the same
+	station */
+	/* if (s.StationTogether1 !== '') code += (',' + s.StationTogether1);
+	if (s.StationTogether2 !== '') code += (',' + s.StationTogether2); */
 	return code;
 }
 
@@ -224,7 +227,7 @@ function load_about()
 {
 	var about_card = new UI.Card({
 		title: "About",
-		body: "WMATA With You\nversion 1.1\nby Alex Lindeman\nhttp://ael.me/\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.",
+		body: "WMATA With You\nversion 1.2\nby Alex Lindeman\nhttp://ael.me/\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.",
 		scrollable: true
 	});
 	about_card.show();
