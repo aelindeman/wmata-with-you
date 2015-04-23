@@ -4,6 +4,8 @@ The Washington, D.C. Metro schedule for the Pebble smartwatch.
 
 Look up when the next train is at any nearby station, and check systemwide service advisories so you don't get stuck waiting.
 
+[Available on the Pebble app store!](https://apps.getpebble.com/applications/5404f8e0ec33d19e2200008b)
+
 Written with [pebble.js](https://github.com/pebble/pebblejs). Uses the [WMATA Transparent Datasets API](http://developer.wmata.com/).
 
 # Author
