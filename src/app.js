@@ -8,9 +8,9 @@ var UI = require('ui');
 var Ajax = require('ajax');
 
 var wmata_api_key = 'tdzzks35mmn4qxjg9mxp324v';
-var wmata_stations_url = 'http://api.wmata.com/Rail.svc/json/JStations';
-var wmata_trains_url = 'http://api.wmata.com/StationPrediction.svc/json/GetPrediction/';
-var wmata_incidents_url = 'http://api.wmata.com/Incidents.svc/json/Incidents';
+var wmata_stations_url = 'https://api.wmata.com/Rail.svc/json/jStations';
+var wmata_trains_url = 'https://api.wmata.com/StationPrediction.svc/json/GetPrediction/';
+var wmata_incidents_url = 'https://api.wmata.com/Incidents.svc/json/Incidents';
 
 /*
  * Un-abbreviates train arrival times (`time`), and adds a "minute(s)" suffix.
@@ -41,20 +41,6 @@ function tr_line (line)
 		case 'bl': return 'Blue';
 		case 'sv': return 'Silver';
 	}
-}
-
-/*
- * Concatenates `s`tations with multiple platforms into one station code.
- */
-function concat_station_codes (s)
-{
-	var code = s.Code;
-	/* Disabled concat code until stations are also concatenated in the stations
-	lists, so irrelevant trains don't appear for other platforms of the same
-	station */
-	/* if (s.StationTogether1 !== '') code += (',' + s.StationTogether1);
-	if (s.StationTogether2 !== '') code += (',' + s.StationTogether2); */
-	return code;
 }
 
 /*
@@ -96,6 +82,7 @@ function distance (x1, y1, x2, y2)
  */
 function determine_location()
 {
+	console.log("asking user for location");
 	navigator.geolocation.getCurrentPosition(load_closest_stations);
 }
 
@@ -104,14 +91,22 @@ function determine_location()
  */
 function load_closest_stations (position)
 {
+	var stations_url = wmata_stations_url + '?api_key=' + wmata_api_key;
 	var stations_list = new UI.Menu({ sections: [{ title: 'Nearby stations', items: [{ title: 'Loading...'}] }] });
 	stations_list.show();
 	
 	var my_lat = position.coords.latitude;
 	var my_lon = position.coords.longitude;
 	
+	// debug from the corner of K and 15th NW
+	//var my_lat = 38.902394;
+	//var my_lon = -77.033570;
+	
+	console.log("got location: " + my_lat + " " + my_lon);
+	console.log("loading stations at url: " + stations_url);
+	
 	new Ajax({
-		url: wmata_stations_url + '?api_key=' + wmata_api_key,
+		url: stations_url,
 		type: 'json'
 	}, function (data) {
 		data.Stations.sort(function (a, b) {
@@ -139,11 +134,14 @@ function load_closest_stations (position)
  */
 function load_trains(station)
 {
+	var trains_url = wmata_trains_url + station.Code + '?api_key=' + wmata_api_key;
 	var trains_list = new UI.Menu({ sections: [{ title: station.Name, items: [{ title: 'Loading...' }] }] });
 	trains_list.show();
 	
+	console.log("loading trains from url: " + trains_url);
+	
 	new Ajax({
-		url: wmata_trains_url + '/' + concat_station_codes(station) + '?api_key=' + wmata_api_key,
+		url: trains_url,
 		type: 'json'
 	}, function (data) {
 		if (data.Trains.length > 0)
@@ -189,6 +187,7 @@ function load_trains(station)
 
 function load_incidents()
 {
+	var incidents_url = wmata_incidents_url + '?api_key=' + wmata_api_key;
 	var incidents = new UI.Menu({ sections: [{ title: 'Advisories', items: [{ title: 'Loading...' }] }] });
 	incidents.show();
 	
@@ -199,7 +198,7 @@ function load_incidents()
 	});
 	
 	new Ajax ({
-		url: wmata_incidents_url + '?api_key=' + wmata_api_key,
+		url: incidents_url,
 		type: 'json'
 	}, function (data) {
 		if (data.Incidents.length > 0)
