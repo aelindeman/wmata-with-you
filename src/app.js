@@ -78,55 +78,54 @@ function distance (x1, y1, x2, y2)
 }
 
 /*
- * Determines user's physical location.
+ * Finds the stations closest to the user's location.
  */
-function determine_location()
-{
-	console.log("asking user for location");
-	navigator.geolocation.getCurrentPosition(load_closest_stations);
-}
-
-/*
- * Finds the stations closest to the user's `position`.
- */
-function load_closest_stations (position)
+function load_closest_stations ()
 {
 	var stations_url = wmata_stations_url + '?api_key=' + wmata_api_key;
 	var stations_list = new UI.Menu({ sections: [{ title: 'Nearby stations', items: [{ title: 'Loading...'}] }] });
 	stations_list.show();
 	
-	var my_lat = position.coords.latitude;
-	var my_lon = position.coords.longitude;
-	
 	// debug from the corner of K and 15th NW
 	//var my_lat = 38.902394;
 	//var my_lon = -77.033570;
 	
-	console.log("got location: " + my_lat + " " + my_lon);
-	console.log("loading stations at url: " + stations_url);
-	
-	new Ajax({
-		url: stations_url,
-		type: 'json'
-	}, function (data) {
-		data.Stations.sort(function (a, b) {
-			return distance(my_lat, my_lon, a.Lat, a.Lon) - distance(my_lat, my_lon, b.Lat, b.Lon);
-		});
-		var max = 8; // maximum number of closest stations to list
-		for (var s = 0; s < max; s ++)
-			stations_list.item(0, s, { title: data.Stations[s].Name, subtitle: concat_line_codes(data.Stations[s], true) });
-		stations_list.on('select', function (e) {
-			load_trains(data.Stations[e.itemIndex]);
-		});
-	}, function (error) {
-		console.log('Error getting stations: ' + error);
-		var card = new UI.Card({
-			title: 'Error',
-			body: error
-		});
-		stations_list.hide();
-		card.show();
-	});
+	navigator.geolocation.getCurrentPosition(
+		function (position) {
+			var my_lat = position.coords.latitude;
+			var my_lon = position.coords.longitude;
+
+			new Ajax({
+				url: stations_url,
+				type: 'json'
+			}, function (data) {
+				data.Stations.sort(function (a, b) {
+					return distance(my_lat, my_lon, a.Lat, a.Lon) - distance(my_lat, my_lon, b.Lat, b.Lon);
+				});
+				var max = 8; // maximum number of closest stations to list
+				for (var s = 0; s < max; s ++)
+					stations_list.item(0, s, { title: data.Stations[s].Name, subtitle: concat_line_codes(data.Stations[s], true) });
+				stations_list.on('select', function (e) {
+					load_trains(data.Stations[e.itemIndex]);
+				});
+			}, function (error) {
+				console.log('Error getting stations: ' + error);
+				var card = new UI.Card({
+					title: 'Error',
+					body: error
+				});
+				stations_list.hide();
+				card.show();
+			});
+		}, function (error) {
+			console.log("Could not get location: " + error);
+			var card = new UI.Card({
+				title: error.message,
+				body: 'Make sure the Pebble app has permission to use your location.'
+			});
+			card.show();
+		},
+		{ timeout: 10000, maximumAge: 30000 });
 }
 
 /*
@@ -137,9 +136,7 @@ function load_trains(station)
 	var trains_url = wmata_trains_url + station.Code + '?api_key=' + wmata_api_key;
 	var trains_list = new UI.Menu({ sections: [{ title: station.Name, items: [{ title: 'Loading...' }] }] });
 	trains_list.show();
-	
-	console.log("loading trains from url: " + trains_url);
-	
+		
 	new Ajax({
 		url: trains_url,
 		type: 'json'
@@ -263,7 +260,7 @@ main.on('select', function (e) {
 	switch (e.itemIndex)
 	{
 		case 0:
-			determine_location();
+			load_closest_stations();
 			break;
 		case 1:
 			load_incidents();
