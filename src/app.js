@@ -123,6 +123,7 @@ function load_closest_stations ()
 				title: error.message,
 				body: 'Make sure the Pebble app has permission to use your location.'
 			});
+			stations_list.hide();
 			card.show();
 		},
 		{ timeout: 10000, maximumAge: 30000 });
