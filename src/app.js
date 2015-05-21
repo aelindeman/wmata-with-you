@@ -10,6 +10,8 @@ var Ajax = require('ajax');
 var wmata_api_key = 'tdzzks35mmn4qxjg9mxp324v';
 var wmata_stations_url = 'https://api.wmata.com/Rail.svc/json/jStations';
 var wmata_trains_url = 'https://api.wmata.com/StationPrediction.svc/json/GetPrediction/';
+var wmata_station_info_url = 'https://api.wmata.com/Rail.svc/json/jStationInfo';
+var wmata_station_times_url = 'https://api.wmata.com/Rail.svc/json/jStationTimes';
 var wmata_incidents_url = 'https://api.wmata.com/Incidents.svc/json/Incidents';
 
 /*
@@ -78,6 +80,24 @@ function distance (x1, y1, x2, y2)
 }
 
 /*
+ * Converts 24-hour time strings to a 12-hour one.
+ */
+function convert_time (time)
+{
+	var halves = time.split(':'), new_time;
+	halves[0] = Math.abs(halves[0]);
+	new_time = (halves[0] == 12) ?
+		new_time = '12:' + halves[1] + ' PM' :
+	(halves[0] === 0) ?
+		new_time = '12:' + halves[1] + ' AM' :
+	(halves[0] > 12) ?
+		(halves[0] - 12) + ':' + halves[1] + ' PM' :
+		halves[0] + ':' + halves[1] + ' AM';
+
+	return new_time;
+}
+
+/*
  * Finds the stations closest to the user's location.
  */
 function load_closest_stations ()
@@ -108,6 +128,9 @@ function load_closest_stations ()
 				stations_list.on('select', function (e) {
 					load_trains(data.Stations[e.itemIndex]);
 				});
+				stations_list.on('longSelect', function (e) {
+					load_station_info(data.Stations[e.itemIndex]);
+				});
 			}, function (error) {
 				console.log('Error getting stations: ' + error);
 				var card = new UI.Card({
@@ -121,7 +144,8 @@ function load_closest_stations ()
 			console.log("Could not get location: " + error);
 			var card = new UI.Card({
 				title: error.message,
-				body: 'Make sure the Pebble app has permission to use your location.'
+				body: 'Make sure your phone has a lock on your location, and that the Pebble app has permission to access it.',
+				scrollable: true
 			});
 			stations_list.hide();
 			card.show();
@@ -183,6 +207,59 @@ function load_trains(station)
 	});
 }
 
+/*
+ * Loads information for a specified station.
+ */
+function load_station_info (station)
+{
+	var station_info_url = wmata_station_info_url + '?StationCode=' + station.Code + '&api_key=' + wmata_api_key;
+	var station_times_url = wmata_station_times_url + '?StationCode=' + station.Code + '&api_key=' + wmata_api_key;
+	var body = '';
+	
+	var card = new UI.Card({
+		title: station.Name,
+		subtitle: concat_line_codes(station, true),
+		scrollable: true,
+		style: 'small'
+	});
+	card.show();
+	
+	new Ajax({
+		url: station_info_url,
+		type: 'json'
+	}, function (station_data) {
+		body = station_data.Address.Street + '\n' + station_data.Address.City + ', ' + station_data.Address.State + '\n' + body;
+		card.body(body);
+	}, function (error) {
+		console.log('Error getting station info: ' + error);
+		body = 'Error getting station info.\n' + body;
+		card.body(body);
+	});
+	
+	new Ajax({
+		url: station_times_url,
+		type: 'json'
+	}, function (times_data) {
+		// why would you make array indices this, WMATA API designer? this is a joke worse than friday night single-tracking
+		var date = new Date();
+		var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+		var today = weekdays[date.getDay()];
+		
+		var opens_at = convert_time(times_data.StationTimes[0][today].OpeningTime);
+		var last_train = convert_time(times_data.StationTimes[0][today].LastTrains[0].Time);
+		
+		body = body + '\nOpens: ' + opens_at  + '\nLast train: ' + last_train;
+		card.body(body);
+	}, function (error) {
+		console.log('Error getting station open/close times: ' + error);
+		body = body + '\nError getting station open/close times.';
+		card.body(body);
+	});
+}
+
+/*
+ * Loads rail incidents in the WMATA system.
+ */
 function load_incidents()
 {
 	var incidents_url = wmata_incidents_url + '?api_key=' + wmata_api_key;
@@ -232,7 +309,7 @@ function load_about()
 {
 	var about_card = new UI.Card({
 		title: "About",
-		body: "WMATA With You\nversion 1.3\nby Alex Lindeman\nael.me/wwy\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.",
+		body: "WMATA With You\nversion 1.5\nby Alex Lindeman\nael.me/wwy\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.",
 		scrollable: true
 	});
 	about_card.show();
