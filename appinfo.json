@@ -3,7 +3,7 @@
     "capabilities": [
         "location"
     ],
-    "companyName": "Alex Lindeman",
+    "companyName": "Alex Lindeman and Daniel Schep",
     "longName": "WMATA With You",
     "projectType": "pebblejs",
     "resources": {
@@ -78,6 +78,11 @@
                 "file": "images/bl.png",
                 "name": "IMAGES_BL_PNG",
                 "type": "png"
+            },
+            {
+                "file": "images/bus.png",
+                "name": "IMAGES_BUS_PNG",
+                "type": "png"
             }
         ]
     },
@@ -85,7 +90,7 @@
     "shortName": "Metro",
     "uuid": "59b60dc7-51ff-46af-90f8-5d63c3237487",
     "versionCode": 1,
-    "versionLabel": "1.5",
+    "versionLabel": "1.6",
     "watchapp": {
         "watchface": false
     }
