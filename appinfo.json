@@ -3,7 +3,7 @@
     "capabilities": [
         "location"
     ],
-    "companyName": "Alex Lindeman",
+    "companyName": "Alex Lindeman and Daniel Schep",
     "longName": "WMATA With You",
     "projectType": "pebblejs",
     "resources": {
@@ -35,33 +35,13 @@
                 "type": "png"
             },
             {
-                "file": "images/yl.png",
-                "name": "IMAGES_YL_PNG",
-                "type": "png"
-            },
-            {
-                "file": "images/sv.png",
-                "name": "IMAGES_SV_PNG",
-                "type": "png"
-            },
-            {
-                "file": "images/rd.png",
-                "name": "IMAGES_RD_PNG",
-                "type": "png"
-            },
-            {
-                "file": "images/or.png",
-                "name": "IMAGES_OR_PNG",
-                "type": "png"
-            },
-            {
-                "file": "images/location.png",
-                "name": "IMAGES_LOCATION_PNG",
-                "type": "png"
-            },
-            {
                 "file": "images/info.png",
                 "name": "IMAGES_INFO_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/bl.png",
+                "name": "IMAGES_BL_PNG",
                 "type": "png"
             },
             {
@@ -75,8 +55,33 @@
                 "type": "png"
             },
             {
-                "file": "images/bl.png",
-                "name": "IMAGES_BL_PNG",
+                "file": "images/rd.png",
+                "name": "IMAGES_RD_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/yl.png",
+                "name": "IMAGES_YL_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/sv.png",
+                "name": "IMAGES_SV_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/location.png",
+                "name": "IMAGES_LOCATION_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/bus.png",
+                "name": "IMAGES_BUS_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/or.png",
+                "name": "IMAGES_OR_PNG",
                 "type": "png"
             }
         ]
@@ -85,8 +90,9 @@
     "shortName": "Metro",
     "uuid": "59b60dc7-51ff-46af-90f8-5d63c3237487",
     "versionCode": 1,
-    "versionLabel": "1.5",
+    "versionLabel": "1.6",
     "watchapp": {
+        "hiddenApp": false,
         "watchface": false
     }
 }

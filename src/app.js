@@ -13,6 +13,8 @@ var wmata_trains_url = 'https://api.wmata.com/StationPrediction.svc/json/GetPred
 var wmata_station_info_url = 'https://api.wmata.com/Rail.svc/json/jStationInfo';
 var wmata_station_times_url = 'https://api.wmata.com/Rail.svc/json/jStationTimes';
 var wmata_incidents_url = 'https://api.wmata.com/Incidents.svc/json/Incidents';
+var wmata_busstops_url = 'https://api.wmata.com/Bus.svc/json/jStops';
+var wmata_busses_url = 'https://api.wmata.com/NextBusService.svc/json/jPredictions';
 
 /*
  * Un-abbreviates train arrival times (`time`), and adds a "minute(s)" suffix.
@@ -66,6 +68,20 @@ function concat_line_codes (s, p)
 		if (s.LineCode4) line += ("," + s.LineCode4.toLowerCase());
 	}
 	return line;
+}
+
+/*
+ * Deduplicate bus routes such as 80, 80v1 to just 80
+ */
+function dedup_bus_routes (routes)
+{
+  var deduped_routes = [];
+  for (var r in routes)
+  {
+    var route = routes[r].replace(/([A-Z]?[0-9]+[A-Z]?)([cv]+[1-9]?)?/, '$1');
+    if (deduped_routes.indexOf(route) < 0) deduped_routes.push(route);
+  }
+  return deduped_routes;
 }
 
 /*
@@ -305,11 +321,111 @@ function load_incidents()
 	
 }
 
+/*
+ * Finds the bus stops closest to the user's location.
+ */
+function load_closest_busstops ()
+{
+	var busstops_list = new UI.Menu({ sections: [{ title: 'Nearby bus stops', items: [{ title: 'Loading...'}] }] });
+	busstops_list.show();
+
+	// debug from the corner of K and 15th NW
+	//var my_lat = 38.902394;
+	//var my_lon = -77.033570;
+
+	navigator.geolocation.getCurrentPosition(
+		function (position) {
+			var my_lat = position.coords.latitude;
+			var my_lon = position.coords.longitude;
+			var busstops_url = wmata_busstops_url + '?Radius=500&api_key=' + wmata_api_key + '&Lat=' + my_lat + '&Lon=' + my_lon;
+
+			new Ajax({
+				url: busstops_url,
+				type: 'json'
+			}, function (data) {
+				var max = 8; // maximum number of closest stations to list
+				for (var s = 0; s < max; s ++)
+					busstops_list.item(0, s, { title: data.Stops[s].Name, subtitle: dedup_bus_routes(data.Stops[s].Routes).join(',') });
+				busstops_list.on('select', function (e) {
+					load_busses(data.Stops[e.itemIndex]);
+				});
+			}, function (error) {
+				console.log('Error getting bus stops: ' + error);
+				var card = new UI.Card({
+					title: 'Error',
+					body: error
+				});
+				busstops_list.hide();
+				card.show();
+			});
+		}, function (error) {
+			console.log("Could not get location: " + error);
+			var card = new UI.Card({
+				title: error.message,
+				body: 'Make sure your phone has a lock on your location, and that the Pebble app has permission to access it.',
+				scrollable: true
+			});
+			busstops_list.hide();
+			card.show();
+		},
+		{ timeout: 10000, maximumAge: 30000 });
+}
+
+/*
+ * Loads busses stoping at `stop` into a menu.
+ */
+function load_busses(stop)
+{
+	var busses_url = wmata_busses_url + '?api_key=' + wmata_api_key + '&StopID=' + stop.StopID;
+	var busses_list = new UI.Menu({ sections: [{ title: stop.Name, items: [{ title: 'Loading...' }] }] });
+	busses_list.show();
+
+	new Ajax({
+		url: busses_url,
+		type: 'json'
+	}, function (data) {
+		if (data.Predictions.length > 0)
+		{
+			var added = 0;
+			for (var b in data.Predictions)
+			{
+        busses_list.item(0, added, { title: data.Predictions[b].RouteID + ': ' + tr_time(data.Predictions[b].Minutes), subtitle: data.Predictions[b].DirectionText });
+
+				added ++;
+			}
+			busses_list.on('select', function (e) {
+				busses_list.hide();
+				load_busses(stop);
+			});
+		}
+		else
+		{
+			var card = new UI.Card({
+				title: stop.Name,
+				body: 'No busses are currently scheduled to stop at this stop.',
+				scrollable: true
+			});
+			busses_list.hide();
+			card.show();
+		}
+	}, function (error) {
+		var card = new UI.Card({
+			title: 'Error',
+			body: error,
+			scrollable: true
+		});
+		console.log('Error getting busses: ' + error);
+		busses_list.hide();
+		card.show();
+	});
+}
+
+
 function load_about()
 {
 	var about_card = new UI.Card({
 		title: "About",
-		body: "WMATA With You\nversion 1.5\nby Alex Lindeman\nael.me/wwy\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.",
+		body: "WMATA With You\nversion 1.6\nby Alex Lindeman and Daniel Schep\nael.me/wwy\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.",
 		scrollable: true
 	});
 	about_card.show();
@@ -328,6 +444,9 @@ var main = new UI.Menu({
 			title: 'Advisories',
 			icon: 'images/incidents.png'
 		}, {
+			title: 'Bus Stops',
+			icon: 'images/bus.png'
+		}, {
 			title: 'About',
 			icon: 'images/info.png'
 		}]
@@ -344,6 +463,9 @@ main.on('select', function (e) {
 			load_incidents();
 			break;
 		case 2:
+			load_closest_busstops();
+			break;
+		case 3:
 			load_about();
 			break;
 	}
