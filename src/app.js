@@ -87,9 +87,9 @@ function convert_time (time)
 	var halves = time.split(':'), new_time;
 	halves[0] = Math.abs(halves[0]);
 	new_time = (halves[0] == 12) ?
-		new_time = '12:' + halves[1] + ' PM' :
+		'12:' + halves[1] + ' PM' :
 	(halves[0] === 0) ?
-		new_time = '12:' + halves[1] + ' AM' :
+		'12:' + halves[1] + ' AM' :
 	(halves[0] > 12) ?
 		(halves[0] - 12) + ':' + halves[1] + ' PM' :
 		halves[0] + ':' + halves[1] + ' AM';
@@ -103,7 +103,13 @@ function convert_time (time)
 function load_closest_stations ()
 {
 	var stations_url = wmata_stations_url + '?api_key=' + wmata_api_key;
-	var stations_list = new UI.Menu({ sections: [{ title: 'Nearby stations', items: [{ title: 'Loading...'}] }] });
+	var stations_list = new UI.Menu({
+		highlightBackgroundColor: "cadetBlue",
+		sections: [{
+			title: 'Nearby stations',
+			items: [{ title: 'Loading...' }]
+		}]
+	});
 	stations_list.show();
 	
 	// debug from the corner of K and 15th NW
@@ -159,9 +165,15 @@ function load_closest_stations ()
 function load_trains(station)
 {
 	var trains_url = wmata_trains_url + station.Code + '?api_key=' + wmata_api_key;
-	var trains_list = new UI.Menu({ sections: [{ title: station.Name, items: [{ title: 'Loading...' }] }] });
+	var trains_list = new UI.Menu({
+		highlightBackgroundColor: "cadetBlue",
+		sections: [{
+			title: station.Name,
+			items: [{ title: 'Loading...' }]
+		}]
+	});
 	trains_list.show();
-		
+	
 	new Ajax({
 		url: trains_url,
 		type: 'json'
@@ -263,7 +275,13 @@ function load_station_info (station)
 function load_incidents()
 {
 	var incidents_url = wmata_incidents_url + '?api_key=' + wmata_api_key;
-	var incidents = new UI.Menu({ sections: [{ title: 'Advisories', items: [{ title: 'Loading...' }] }] });
+	var incidents = new UI.Menu({
+		highlightBackgroundColor: "cadetBlue",
+		sections: [{
+			title: 'Advisories',
+			items: [{ title: 'Loading...' }]
+		}]
+	});
 	incidents.show();
 	
 	var card = new UI.Card({
@@ -309,7 +327,7 @@ function load_about()
 {
 	var about_card = new UI.Card({
 		title: "About",
-		body: "WMATA With You\nversion 1.5\nby Alex Lindeman\nael.me/wwy\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.",
+		body: "WMATA With You\nversion 1.6\nby Alex Lindeman\nael.me/wwy\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.",
 		scrollable: true
 	});
 	about_card.show();
@@ -319,10 +337,11 @@ function load_about()
  * Main body
  */
 var main = new UI.Menu({
+	highlightBackgroundColor: "cadetBlue",
 	sections: [{
 		title: "WMATA With You",
 		items: [{
-			title: 'Stations',
+			title: 'Nearby',
 			icon: 'images/location.png'
 		}, {
 			title: 'Advisories',
