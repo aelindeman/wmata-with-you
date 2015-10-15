@@ -1,4 +1,50 @@
-# Hello!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
+	<title>WMATA With You &mdash; Configuration</title>
+	<link rel="stylesheet" href="slate/css/slate.min.css">
+</head>
+<body>
+	<form id="main-form">
+		<div class="item-container">
+			<div class="item-container-header">Menu options</div>
+			<div class="item-container-content">
+				<label class="item tab-buttons">
+					<a name="buses_first" class="tab-button active">Trains first</a>
+					<a name="buses_first" class="tab-button">Buses first</a>
+				</label>
+				<label class="item item-subtitle-wrapper">
+					<input type="range" class="item-slider" name="max_nearest_items" value="6" min="3" max="12">
+					<div class="item-subtitle">Number of options to show</div>
+					<div class="item-input-wrapper item-slider-text">
+						<input type="number" class="item-input" name="max_nearest_items" value="6" min="3" max="12">
+					</div>
+				</label>
+			</div>
+		</div>
 
-This is the configuration page for WMATA With You.
+		<div class="item-container">
+			<div class="item-container-header">Favorite train stations</div>
+			<div class="item-container-content">
+				<div class="item-dynamic-list"></div>
+			</div>
+		</div>
 
+		<div class="item-container">
+			<div class="item-container-header">Favorite bus stops</div>
+			<div class="item-container-content">
+				<div class="item-dynamic-list"></div>
+			</div>
+		</div>
+
+		<div class="item-container">
+			<div class="button-container">
+				<input type="button" class="item-button" value="Save">
+			</div>
+		</div>
+	</form>
+	<script type="text/javascript" src="slate/js/slate.min.js"></script>
+</body>
+</html>
