@@ -78,6 +78,11 @@
                 "menuIcon": true,
                 "name": "IMAGES_METRO_PNG",
                 "type": "png"
+            },
+            {
+                "file": "images/star.png",
+                "name": "IMAGES_STAR_PNG",
+                "type": "png"
             }
         ]
     },
@@ -85,7 +90,7 @@
     "shortName": "Metro",
     "uuid": "59b60dc7-51ff-46af-90f8-5d63c3237487",
     "versionCode": 1,
-    "versionLabel": "1.6",
+    "versionLabel": "2.0",
     "watchapp": {
         "hiddenApp": false,
         "watchface": false
