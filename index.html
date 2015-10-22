@@ -12,15 +12,21 @@
 			<div class="item-container-header">Menu options</div>
 			<div class="item-container-content">
 				<label class="item tab-buttons">
-					<a name="buses_first" class="tab-button active">Trains first</a>
-					<a name="buses_first" class="tab-button">Buses first</a>
+					<a name="buses_first" class="tab-button active">Show trains first</a>
+					<a name="buses_first" class="tab-button">Show buses first</a>
 				</label>
 				<label class="item item-subtitle-wrapper">
-					<input type="range" class="item-slider" name="max_nearest_items" value="6" min="3" max="12">
-					<div class="item-subtitle">Number of options to show</div>
+					Number of stations to show
+					<div class="item-subtitle">Fewer than 3 won&rsquo;t be helpful</div>
+					<div class="item-subtitle">More than 10 may slow your watch down</div>
 					<div class="item-input-wrapper item-slider-text">
-						<input type="number" class="item-input" name="max_nearest_items" value="6" min="3" max="12">
+						<input type="number" class="item-input" name="max_nearest_items" value="6" min="2" max="16">
 					</div>
+				</label>
+				<label class="item item-subtitle-wrapper">
+					Higher selection contrast
+					<div class="item-subtitle">Make the selection color darker</div>
+					<input type="checkbox" class="item-toggle" name="high_contrast_mode">
 				</label>
 			</div>
 		</div>
@@ -28,20 +34,25 @@
 		<div class="item-container">
 			<div class="item-container-header">Favorite train stations</div>
 			<div class="item-container-content">
-				<div class="item-dynamic-list"></div>
+				<div class="item-dynamic-list" name="saved_stations">
+
+				</div>
 			</div>
 		</div>
 
 		<div class="item-container">
 			<div class="item-container-header">Favorite bus stops</div>
 			<div class="item-container-content">
-				<div class="item-dynamic-list"></div>
+				<div class="item-dynamic-list" name="saved_stops">
+
+				</div>
 			</div>
 		</div>
 
 		<div class="item-container">
-			<div class="button-container">
-				<input type="button" class="item-button" value="Save">
+			<div class="button-container">			
+				<input type="button" class="item-button" value="Discard changes" style="margin-bottom: 0.5em">
+				<input type="submit" class="item-button" value="Save">
 			</div>
 		</div>
 	</form>
