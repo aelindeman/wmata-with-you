@@ -31,13 +31,10 @@ console.log ('init finshed: globals');
 
 Settings.config({
 	url: 'http://aelindeman.github.io/wmata-with-you/',
-	autoSave: false
 }, function (e) {
 	console.log('opening config: ' + JSON.stringify(e));
 }, function (e) {
 	console.log('closing config: ' + JSON.stringify(e));
-	if (e.failed)
-		console.log('config error: ' + e.response);
 });
 
 var buses_first = parseInt(Settings.option('buses-first')) == 1 || false;
