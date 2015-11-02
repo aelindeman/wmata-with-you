@@ -1,7 +1,8 @@
 {
     "appKeys": {},
     "capabilities": [
-        "location"
+        "location",
+        "configurable"
     ],
     "companyName": "Alex Lindeman",
     "longName": "WMATA With You",
@@ -29,43 +30,9 @@
                 "type": "font"
             },
             {
-                "file": "images/bl.png",
-                "name": "IMAGES_BL_PNG",
-                "type": "png"
-            },
-            {
-                "file": "images/gr.png",
-                "name": "IMAGES_GR_PNG",
-                "type": "png"
-            },
-            {
-                "file": "images/incidents.png",
-                "name": "IMAGES_INCIDENTS_PNG",
-                "type": "png"
-            },
-            {
-                "file": "images/info.png",
-                "name": "IMAGES_INFO_PNG",
-                "type": "png"
-            },
-            {
-                "file": "images/location.png",
-                "name": "IMAGES_LOCATION_PNG",
-                "type": "png"
-            },
-            {
-                "file": "images/or.png",
-                "name": "IMAGES_OR_PNG",
-                "type": "png"
-            },
-            {
-                "file": "images/rd.png",
-                "name": "IMAGES_RD_PNG",
-                "type": "png"
-            },
-            {
-                "file": "images/sv.png",
-                "name": "IMAGES_SV_PNG",
+                "file": "images/metro.png",
+                "menuIcon": true,
+                "name": "IMAGES_METRO_PNG",
                 "type": "png"
             },
             {
@@ -74,20 +41,58 @@
                 "type": "png"
             },
             {
-                "file": "images/metro.png",
-                "menuIcon": true,
-                "name": "IMAGES_METRO_PNG",
+                "file": "images/sv.png",
+                "name": "IMAGES_SV_PNG",
                 "type": "png"
             },
             {
                 "file": "images/star.png",
                 "name": "IMAGES_STAR_PNG",
                 "type": "png"
+            },
+            {
+                "file": "images/rd.png",
+                "name": "IMAGES_RD_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/or.png",
+                "name": "IMAGES_OR_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/location.png",
+                "name": "IMAGES_LOCATION_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/info.png",
+                "name": "IMAGES_INFO_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/incidents.png",
+                "name": "IMAGES_INCIDENTS_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/gr.png",
+                "name": "IMAGES_GR_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/bl.png",
+                "name": "IMAGES_BL_PNG",
+                "type": "png"
             }
         ]
     },
     "sdkVersion": "3",
-    "shortName": "Metro",
+    "shortName": "WMATA With You",
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
     "uuid": "59b60dc7-51ff-46af-90f8-5d63c3237487",
     "versionCode": 1,
     "versionLabel": "2.0",

@@ -30,13 +30,18 @@ console.log ('init finshed: globals');
 /* @group Settings configuration */
 
 Settings.config({
-	url: 'http://ael.me/wwy-pebble-config/config.html'
-	//url: 'http://typhoon.ael.me/wmata/'
+	url: 'http://aelindeman.github.io/wmata-with-you/',
+	autoSave: false
 }, function (e) {
-	console.log('Opening config: ' + JSON.stringify(e));
+	console.log('opening config: ' + JSON.stringify(e));
 }, function (e) {
-	console.log('Closing config: ' + JSON.stringify(e));
+	console.log('closing config: ' + JSON.stringify(e));
+	if (e.failed)
+		console.log('config error: ' + e.response);
 });
+
+var buses_first = parseInt(Settings.option('buses-first')) == 1 || false;
+var highlight_color = Settings.option('selection-color') || 'cadetBlue';
 
 console.log ('init finished: user settings');
 
@@ -160,12 +165,12 @@ console.log('init finished: helper functions');
 function load_closest_stations ()
 {	
 	var stations_list = new UI.Menu({
-		highlightBackgroundColor: 'cadetBlue',
+		highlightBackgroundColor: highlight_color,
 		sections: [{
-			title: 'Trains',
+			title: (buses_first ? 'Buses' : 'Trains'),
 			items: [{ title: 'Loading...' }]
 		}, {
-			title: 'Buses',
+			title: (buses_first ? 'Trains' : 'Buses'),
 			items: [{ title: 'Loading...' }]
 		}]
 	});
@@ -191,7 +196,7 @@ function load_closest_stations ()
 			}
 			
 			function ajax_error (error, code) {
-				console.log('Error getting stations (' + code + '): ' + error);
+				console.log('Error getting stations/stops (' + code + '): ' + error);
 				var card = new UI.Card({
 					title: 'Error',
 					body: error
@@ -200,7 +205,8 @@ function load_closest_stations ()
 				card.show();
 			}
 			
-			var max = 6; // maximum number of closest stations/bus stops to list (per group)
+			// maximum number of closest stations/bus stops to list (per group)
+			var max = parseInt(Settings.option('closest-things')) || 6;
 
 			// load rail stations
 			new Ajax({
@@ -213,7 +219,7 @@ function load_closest_stations ()
 					for (var s = 0; s < max; s ++)
 					{
 						var station = data.Stations[s];
-						stations_list.item(0, s, {
+						stations_list.item((buses_first ? 1 : 0), s, {
 							title: station.Name,
 							subtitle: concat_line_codes(station, true),
 							info: station // stash station info in menu element to use on select/long press
@@ -222,7 +228,7 @@ function load_closest_stations ()
 				}
 				else
 				{
-					stations_list.items(0, [{ title: 'No stations nearby' }]);
+					stations_list.items((buses_first ? 1 : 0), [{ title: 'No stations nearby' }]);
 				}
 			}, ajax_error);
 			
@@ -240,7 +246,7 @@ function load_closest_stations ()
 						var stop = data.Stops[s];
 						if (String(stop.StopID) != '0')
 						{
-							stations_list.item(1, added, {
+							stations_list.item((buses_first ? 0 : 1), added, {
 								title: capitalize(stop.Name),
 								subtitle: concat_bus_routes(stop),
 								info: stop
@@ -253,14 +259,14 @@ function load_closest_stations ()
 				}
 				else
 				{
-					stations_list.items(1, [{ title: 'No stops nearby' }]);
+					stations_list.items((buses_first ? 0 : 1), [{ title: 'No stops nearby' }]);
 				}
 			}, ajax_error);
 		}, function (error) {
 			console.log('Location error: ' + JSON.stringify(error));
 			var card = new UI.Card({
-				title: error.message,
-				body: 'Make sure your phone has a lock on your location, and that the Pebble app has permission to access it.',
+				title: 'Location error',
+				body: 'Could not find your location; check your phone for warnings.',
 				scrollable: true
 			});
 			stations_list.hide();
@@ -275,10 +281,10 @@ function load_closest_stations ()
 			//console.log(JSON.stringify(e.item.info));
 			switch (e.sectionIndex)
 			{
-				case 0:
+				case (buses_first ? 1 : 0):
 					load_trains(e.item.info);
 					break;
-				case 1:
+				case (buses_first ? 0 : 1):
 					load_buses(e.item.info);
 					break;
 			}
@@ -291,10 +297,10 @@ function load_closest_stations ()
 			//console.log(JSON.stringify(e.item.info));
 			switch (e.sectionIndex)
 			{
-				case 0:
+				case (buses_first ? 1 : 0):
 					load_station_info(e.item.info);
 					break;
-				case 1:
+				case (buses_first ? 0 : 1):
 					load_bus_stop_info(e.item.info);
 					break;
 			}
@@ -311,63 +317,78 @@ console.log('init finished: ui function load_closest_stations');
 function load_saved_stations()
 {
 	var saved_list = new UI.Menu({
-		highlightBackgroundColor: 'cadetBlue',
+		highlightBackgroundColor: highlight_color,
 		sections: [{
-			title: 'Trains',
-			items: [{ title: 'None saved' }]
+			title: (buses_first ? 'Buses' : 'Trains'),
+			items: [{ title: 'Loading...' }]
 		}, {
-			title: 'Buses',
-			items: [{ title: 'None saved' }]
+			title: (buses_first ? 'Trains' : 'Buses'),
+			items: [{ title: 'Loading...' }]
 		}]
 	});
-	
-	// debug with Friendship Heights and Wilson & Glebe
-	var train_debug = {"Code":"A08","Name":"Friendship Heights","StationTogether1":"","StationTogether2":"","LineCode1":"RD","LineCode2":null,"LineCode3":null,"LineCode4":null,"Lat":38.960744,"Lon":-77.085969,"Address":{"Street":"5337 Wisconsin Avenue NW","City":"Washington","State":"DC","Zip":"20015"}};
-	var bus_debug = {"StopID":"6000925","Name":"WILSON BLVD + N GLEBE RD","Lon":-77.112601,"Lat":38.880057,"Routes":["1A","1B","1E","25B","25Bv1","25Bv2","2A","38B"]};
-	
-	saved_list.item(0, 0, { title: 'Friendship Heights', subtitle: 'Red', info: train_debug });
-	saved_list.item(1, 0, { title: 'Wilson Blvd + N Glebe Rd', subtitle: '1A, 1B, 1E, 25B, 2A, 38B', info: bus_debug });
-	
 	saved_list.show();
 	
-	/*var saved_stations = Settings.option('saved_stations');
-	if (saved_stations.length > 0)
+	// debug with Friendship Heights and Wilson & Glebe
+	//var train_debug = {"Code":"A08","Name":"Friendship Heights","StationTogether1":"","StationTogether2":"","LineCode1":"RD","LineCode2":null,"LineCode3":null,"LineCode4":null,"Lat":38.960744,"Lon":-77.085969,"Address":{"Street":"5337 Wisconsin Avenue NW","City":"Washington","State":"DC","Zip":"20015"}};
+	//var bus_debug = {"StopID":"6000925","Name":"WILSON BLVD + N GLEBE RD","Lon":-77.112601,"Lat":38.880057,"Routes":["1A","1B","1E","25B","25Bv1","25Bv2","2A","38B"]};
+		
+	var saved_stations = Settings.option('saved-rail');
+	if (saved_stations !== undefined && saved_stations.length > 0)
 	{
 		for (var t in saved_stations)
 		{
 			var station = saved_stations[t];
-			saved_list.item(0, t, {
+			saved_list.item((buses_first ? 1 : 0), t, {
 				title: station.Name,
 				subtitle: concat_line_codes(station, true),
 				info: station // stash station info in menu element to use on select/long press
 			});
 		}
 	}
+	else
+	{
+		saved_list.item((buses_first ? 1 : 0), 0, { title: 'None saved' });
+	}
 	
-	var saved_stops = Settings.option('saved_stops');
-	if (saved_stops.length > 0)
+	var saved_stops = Settings.option('saved-bus');
+	if (saved_stops !== undefined && saved_stops.length > 0)
 	{
 		for (var b in saved_stops)
 		{
 			var stop = saved_stops[b];
-			saved_list.item(1, b, {
+			saved_list.item((buses_first ? 0 : 1), b, {
 				title: capitalize(stop.Name),
-				subtitle: stop.Routes.join(', '),
+				subtitle: concat_bus_routes(stop),
 				info: stop
 			});
 		}
 	}
-	*/
+	else
+	{
+		saved_list.item((buses_first ? 0 : 1), 0, { title: 'None saved' });
+	}
+	
+	var invalid_setting = (saved_stations === undefined && saved_stops === undefined);
+	if ((!invalid_setting && saved_stations.length + saved_stops.length === 0) || invalid_setting)
+	{		
+		var card = new UI.Card({
+			title: 'Nothing saved',
+			body: 'Use the Pebble app on your phone to add stations.'
+		});
+		saved_list.hide();
+		card.show();
+	}
+	
 	saved_list.on('select', function (e) {
 		if (e.item.hasOwnProperty('info'))
 		{
 			console.log(JSON.stringify(e.item.info));
 			switch (e.sectionIndex)
 			{
-				case 0:
+				case (buses_first ? 1 : 0):
 					load_trains(e.item.info);
 					break;
-				case 1:
+				case (buses_first ? 0 : 1):
 					load_buses(e.item.info);
 					break;
 			}
@@ -380,10 +401,10 @@ function load_saved_stations()
 			console.log(JSON.stringify(e.item.info));
 			switch (e.sectionIndex)
 			{
-				case 0:
+				case (buses_first ? 1 : 0):
 					load_station_info(e.item.info);
 					break;
-				case 1:
+				case (buses_first ? 0 : 1):
 					load_bus_stop_info(e.item.info);
 					break;
 			}
@@ -401,7 +422,7 @@ function load_trains(station)
 {
 	var trains_url = wmata_trains_url + station.Code + '?api_key=' + wmata_api_key;
 	var trains_list = new UI.Menu({
-		highlightBackgroundColor: "cadetBlue",
+		highlightBackgroundColor: highlight_color,
 		sections: [{
 			title: station.Name,
 			items: [{ title: 'Loading...' }]
@@ -456,7 +477,7 @@ function load_buses (stop)
 {
 	var buses_url = wmata_buses_url + '?StopID=' + stop.StopID + '&api_key=' + wmata_api_key;
 	var buses_list = new UI.Menu({
-		highlightBackgroundColor: 'cadetBlue',
+		highlightBackgroundColor: highlight_color,
 		sections: [{
 			title: capitalize(stop.Name),
 			items: [{ title: 'Loading...' }]
@@ -595,7 +616,7 @@ function load_incidents()
 {
 	var incidents_url = wmata_incidents_url + '?api_key=' + wmata_api_key;
 	var incidents = new UI.Menu({
-		highlightBackgroundColor: 'cadetBlue',
+		highlightBackgroundColor: highlight_color,
 		sections: [{
 			title: 'Advisories',
 			items: [{ title: 'Loading...' }]
@@ -614,7 +635,7 @@ function load_incidents()
 				var incident = data.Incidents[i];
 				incidents.item(0, i, { title: incident.IncidentType, subtitle: incident.Description.substring(0, 31) });
 			}
-
+			
 			incidents.on('select', function (e) {
 				var card = new UI.Card({
 					title: data.Incidents[e.itemIndex].IncidentType,
@@ -661,7 +682,7 @@ console.log('init finished: ui function load_about');
 /* @group Main body */
 
 var main = new UI.Menu({
-	highlightBackgroundColor: 'cadetBlue',
+	highlightBackgroundColor: highlight_color,
 	sections: [{
 		// title: "WMATA With You",
 		items: [{
