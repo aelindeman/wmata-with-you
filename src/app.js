@@ -30,8 +30,7 @@ console.log ('init finshed: globals');
 /* @group Settings configuration */
 
 Settings.config({
-	// url: 'http://aelindeman.github.io/wmata-with-you/'
-	url: 'http://typhoon.ael.me/wmata-with-you-config/'
+	url: 'http://aelindeman.github.io/wmata-with-you/'
 }, function (e) {
 	console.log('opening config: ' + JSON.stringify(e));
 }, function (e) {
