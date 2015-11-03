@@ -1,0 +1,15 @@
+li&attributes({'data-id': i})
+	span.name=n
+		if l
+			each i in l
+				span.l(class=i)
+					span.hidden=i
+		else if b
+			span.r=b
+	ul.actions
+		li.move-up
+			a(href='javascript:;') &uarr;
+		li.move-down
+			a(href='javascript:;') &darr;
+		li.remove
+			a(href='javascript:;') &times;

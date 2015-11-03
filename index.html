@@ -1,61 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
-	<title>WMATA With You &mdash; Configuration</title>
-	<link rel="stylesheet" href="slate/css/slate.min.css">
-</head>
-<body>
-	<form id="main-form">
-		<div class="item-container">
-			<div class="item-container-header">Menu options</div>
-			<div class="item-container-content">
-				<label class="item tab-buttons">
-					<a name="buses_first" class="tab-button active">Show trains first</a>
-					<a name="buses_first" class="tab-button">Show buses first</a>
-				</label>
-				<label class="item item-subtitle-wrapper">
-					Number of stations to show
-					<div class="item-subtitle">Fewer than 3 won&rsquo;t be helpful</div>
-					<div class="item-subtitle">More than 10 may slow your watch down</div>
-					<div class="item-input-wrapper item-slider-text">
-						<input type="number" class="item-input" name="max_nearest_items" value="6" min="2" max="16">
+<html>
+	<head>
+		<title>WMATA With You &mdash; Settings</title>
+		<meta charset="utf-8" />
+		<meta name="author" content="Alex Lindeman" />
+		<meta name="created" content="2015-11-02" />
+		<meta name="description" content="The configuration page for WMATA With You, a Pebble smartwatch app for public transport in and around Washington, D.C., available at https://apps.getpebble.com/applications/5404f8e0ec33d19e2200008b" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css" />
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.0.0/awesomplete.min.css" />
+		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,500,700" />
+		<link rel="stylesheet" type="text/css" href="styles.css" />
+	</head>
+	<body>
+		<main class="page">
+			<header>
+				<h1>WMATA With You <span class="subtitle">Settings</span></h1>
+			</header>
+			<noscript>You&rsquo;re going to need to enable Javascript to do anything here.</noscript>
+			<section class="menus">
+				<h2><em>Nearby</em> menu</h2>
+				<article>
+					<h3 class="hidden">Preferred mode of transit</h3>
+					<p>Show <select id="buses-first" name="buses-first"><option value="0">trains</option><option value="1">buses</option></select> first</p>
+				</article>
+				<article>
+					<h3 class="hidden">Number of closest things</h3>
+					<p>Show <input id="closest-things" name="closest-things" type="number" min="2" max="20" required="required" style="width: 3em" /> of the closest rail stations &amp; bus stops (each)</p>
+					<p class="note">Fewer than 3 won&rsquo;t be useful; more than 10 may make the app slow</p>
+				</article>
+				<article>
+					<h3 class="hidden">High contrast mode</h3>
+					<p>Use <span id="selection-color-preview" class="cadetBlue"><span class="hidden">&#9679;</span></span><select id="selection-color" name="selection-color"><option value="cadetBlue" class="cadetBlue" selected="selected">blue</option><option value="midnightGreen" class="midnightGreen">darker blue</option><option value="black" class="black">black</option></select> as the highlight color in menus</p>
+				</article>
+			</section>
+			<section>
+				<h2>Saved rail stations</h2>
+				<article>
+					<div class="top-bar">
+						<input type="text" id="add-saved-rail-field" class="input-text rail awesomeplete" placeholder="Add a station" autocomplete="off" /><input type="button" id="add-saved-rail-button" class="button input-endcap" title="add" value="+" />
 					</div>
-				</label>
-				<label class="item item-subtitle-wrapper">
-					Higher selection contrast
-					<div class="item-subtitle">Make the selection color darker</div>
-					<input type="checkbox" class="item-toggle" name="high_contrast_mode">
-				</label>
-			</div>
-		</div>
-
-		<div class="item-container">
-			<div class="item-container-header">Favorite train stations</div>
-			<div class="item-container-content">
-				<div class="item-dynamic-list" name="saved_stations">
-
-				</div>
-			</div>
-		</div>
-
-		<div class="item-container">
-			<div class="item-container-header">Favorite bus stops</div>
-			<div class="item-container-content">
-				<div class="item-dynamic-list" name="saved_stops">
-
-				</div>
-			</div>
-		</div>
-
-		<div class="item-container">
-			<div class="button-container">			
-				<input type="button" class="item-button" value="Discard changes" style="margin-bottom: 0.5em">
-				<input type="submit" class="item-button" value="Save">
-			</div>
-		</div>
-	</form>
-	<script type="text/javascript" src="slate/js/slate.min.js"></script>
-</body>
+					<div>
+						<ul class="saved-list" id="saved-rail"></ul>
+					</div>
+				</article>
+			</section>
+			<section>
+				<h2>Saved bus stops</h2>
+				<article>
+					<div class="top-bar">
+						<input type="text" id="add-saved-bus-field" class="input-text bus awesomeplete" placeholder="Add a stop" autocomplete="off" /><input type="button" id="add-saved-bus-button" class="button input-endcap" title="add" value="+" />
+					</div>
+					<div>
+						<ul class="saved-list" id="saved-bus"></ul>
+					</div>
+				</article>
+			</section>
+			<section class="buttons">
+				<article>
+					<input type="button" id="do-discard" name="do" value="Discard changes" class="button discard-button" />
+					<input type="submit" id="do-submit" name="do" value="Save" class="button save-button" />
+					<p class="note left">You&rsquo;ll need to re-open the app on your watch (if it&rsquo;s open) to see your changes</p>
+				</article>
+			</section>
+		</main>
+		<footer>
+			<input type="button" id="do-defaults" name="do" value="Clear settings" class="button defaults-button" />
+		</footer>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.0.0/awesomplete.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jade/1.11.0/runtime.min.js"></script>
+		<script type="text/javascript" src="jade/saved-list-item.js"></script>
+		<script type="text/javascript" src="scripts.js"></script>
+	</body>
 </html>
