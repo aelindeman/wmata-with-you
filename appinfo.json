@@ -30,12 +30,6 @@
                 "type": "font"
             },
             {
-                "file": "images/metro.png",
-                "menuIcon": true,
-                "name": "IMAGES_METRO_PNG",
-                "type": "png"
-            },
-            {
                 "file": "images/yl.png",
                 "name": "IMAGES_YL_PNG",
                 "type": "png"
@@ -58,6 +52,12 @@
             {
                 "file": "images/or.png",
                 "name": "IMAGES_OR_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/metro.png",
+                "menuIcon": true,
+                "name": "IMAGES_METRO_PNG",
                 "type": "png"
             },
             {
@@ -95,7 +95,7 @@
     ],
     "uuid": "59b60dc7-51ff-46af-90f8-5d63c3237487",
     "versionCode": 1,
-    "versionLabel": "2.0",
+    "versionLabel": "2.1",
     "watchapp": {
         "hiddenApp": false,
         "watchface": false

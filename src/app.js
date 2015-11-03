@@ -320,7 +320,12 @@ function load_saved_stations()
 	//var train_debug = {"Code":"A08","Name":"Friendship Heights","StationTogether1":"","StationTogether2":"","LineCode1":"RD","LineCode2":null,"LineCode3":null,"LineCode4":null,"Lat":38.960744,"Lon":-77.085969,"Address":{"Street":"5337 Wisconsin Avenue NW","City":"Washington","State":"DC","Zip":"20015"}};
 	//var bus_debug = {"StopID":"6000925","Name":"WILSON BLVD + N GLEBE RD","Lon":-77.112601,"Lat":38.880057,"Routes":["1A","1B","1E","25B","25Bv1","25Bv2","2A","38B"]};
 		
-	var saved_stations = JSON.parse(Settings.option('saved-rail'));
+	var saved_stations;
+	try {
+		saved_stations = JSON.parse(Settings.option('saved-rail'));
+	} catch (e) {
+		saved_stations = [];
+	}
 	if (saved_stations !== undefined && saved_stations.length > 0)
 	{
 		for (var t in saved_stations)
@@ -338,7 +343,12 @@ function load_saved_stations()
 		saved_list.item((buses_first ? 1 : 0), 0, { title: 'None saved' });
 	}
 	
-	var saved_stops = JSON.parse(Settings.option('saved-bus'));
+	var saved_stops;
+	try {
+		saved_stops = JSON.parse(Settings.option('saved-bus'));
+	} catch (e) {
+		saved_stops = [];
+	}
 	if (saved_stops !== undefined && saved_stops.length > 0)
 	{
 		for (var b in saved_stops)
@@ -658,7 +668,7 @@ function load_about()
 {
 	var about_card = new UI.Card({
 		title: 'About',
-		body: 'WMATA With You\nversion 2.0\nby Alex Lindeman\nael.me/wwy\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.',
+		body: 'WMATA With You\nversion 2.1\nby Alex Lindeman\nael.me/wwy\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.',
 		scrollable: true
 	});
 	about_card.show();
