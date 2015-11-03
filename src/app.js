@@ -30,7 +30,8 @@ console.log ('init finshed: globals');
 /* @group Settings configuration */
 
 Settings.config({
-	url: 'http://aelindeman.github.io/wmata-with-you/'
+	// url: 'http://aelindeman.github.io/wmata-with-you/'
+	url: 'http://typhoon.ael.me/wmata-with-you-config/'
 }, function (e) {
 	console.log('opening config: ' + JSON.stringify(e));
 }, function (e) {
@@ -98,7 +99,7 @@ function concat_line_codes (s, p)
 function concat_bus_routes (l)
 {
 	return l.Routes
-		.join(', ')
+		.join(' ')
 		.replace(/((\w+v[0-9]+)(,\s)?|(,\s)?(\w+v[0-9]))/g, '') // remove "alternate" routes (ending in v[0-9]+) and commas around them
 		.toUpperCase();
 }
@@ -209,7 +210,7 @@ function load_closest_stations ()
 						var station = data.Stations[s];
 						stations_list.item((buses_first ? 1 : 0), s, {
 							title: station.Name,
-							subtitle: concat_line_codes(station, true),
+							subtitle: concat_line_codes(station, true).join(', '),
 							info: station // stash station info in menu element to use on select/long press
 						});
 					}
@@ -320,7 +321,7 @@ function load_saved_stations()
 	//var train_debug = {"Code":"A08","Name":"Friendship Heights","StationTogether1":"","StationTogether2":"","LineCode1":"RD","LineCode2":null,"LineCode3":null,"LineCode4":null,"Lat":38.960744,"Lon":-77.085969,"Address":{"Street":"5337 Wisconsin Avenue NW","City":"Washington","State":"DC","Zip":"20015"}};
 	//var bus_debug = {"StopID":"6000925","Name":"WILSON BLVD + N GLEBE RD","Lon":-77.112601,"Lat":38.880057,"Routes":["1A","1B","1E","25B","25Bv1","25Bv2","2A","38B"]};
 		
-	var saved_stations = Settings.option('saved-rail');
+	var saved_stations = JSON.parse(Settings.option('saved-rail'));
 	if (saved_stations !== undefined && saved_stations.length > 0)
 	{
 		for (var t in saved_stations)
@@ -328,7 +329,7 @@ function load_saved_stations()
 			var station = saved_stations[t];
 			saved_list.item((buses_first ? 1 : 0), t, {
 				title: station.Name,
-				subtitle: concat_line_codes(station, true),
+				subtitle: concat_line_codes(station, true).join(', '),
 				info: station // stash station info in menu element to use on select/long press
 			});
 		}
@@ -338,7 +339,7 @@ function load_saved_stations()
 		saved_list.item((buses_first ? 1 : 0), 0, { title: 'None saved' });
 	}
 	
-	var saved_stops = Settings.option('saved-bus');
+	var saved_stops = JSON.parse(Settings.option('saved-bus'));
 	if (saved_stops !== undefined && saved_stops.length > 0)
 	{
 		for (var b in saved_stops)
@@ -520,7 +521,7 @@ function load_station_info (station)
 	
 	var card = new UI.Card({
 		title: station.Name,
-		subtitle: concat_line_codes(station, true),
+		subtitle: concat_line_codes(station, true).join(', '),
 		scrollable: true,
 		style: 'small'
 	});
