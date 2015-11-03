@@ -30,7 +30,7 @@ console.log ('init finshed: globals');
 /* @group Settings configuration */
 
 Settings.config({
-	url: 'http://aelindeman.github.io/wmata-with-you/',
+	url: 'http://aelindeman.github.io/wmata-with-you/'
 }, function (e) {
 	console.log('opening config: ' + JSON.stringify(e));
 }, function (e) {
@@ -83,22 +83,13 @@ function tr_line (line)
  */
 function concat_line_codes (s, p)
 {
-	var line = s.LineCode1;
-	if (p)
+	var l = [];
+	for (var i = 1; i < 5; i ++) // LineCode[1-4]
 	{
-		line = tr_line(line);
-		if (s.LineCode2) line += (', ' + tr_line(s.LineCode2));
-		if (s.LineCode3) line += (', ' + tr_line(s.LineCode3));
-		if (s.LineCode4) line += (', ' + tr_line(s.LineCode4));
+		var c = s['LineCode' + i];
+		if (c) l.push(p ? tr_line(c) : c.toLowerCase());
 	}
-	else
-	{
-		line = line.toLowerCase();
-		if (s.LineCode2) line += (',' + s.LineCode2.toLowerCase());
-		if (s.LineCode3) line += (',' + s.LineCode3.toLowerCase());
-		if (s.LineCode4) line += (',' + s.LineCode4.toLowerCase());
-	}
-	return line;
+	return l;
 }
 
 /*
@@ -667,7 +658,7 @@ function load_about()
 {
 	var about_card = new UI.Card({
 		title: 'About',
-		body: 'WMATA With You\nversion 2.0-b\nby Alex Lindeman\nael.me/wwy\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.',
+		body: 'WMATA With You\nversion 2.0\nby Alex Lindeman\nael.me/wwy\n\nBuilt with pebble.js and the WMATA Transparent Datasets API.',
 		scrollable: true
 	});
 	about_card.show();
