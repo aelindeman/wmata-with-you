@@ -55,9 +55,8 @@ function concat_bus_routes (l)
 
 /* @end */
 
-
 // rail station autocomplete
-var rail_ap = new Awesomplete(document.getElementById('add-saved-rail-field'), {
+var rail_ap = new Awesomplete('#add-saved-rail-field', {
 	replace: function(text) {
 		var stop = text.indexOf('\t');
 		this.input.value = text.substring(0, stop);
@@ -103,7 +102,7 @@ $.ajax({
 });
 
 // bus stop autocomplete
-var bus_ap = new Awesomplete(document.getElementById('add-saved-bus-field'), {
+var bus_ap = new Awesomplete('#add-saved-bus-field', {
 	replace: function(text) {
 		var stop = text.indexOf('\t');
 		this.input.value = text.substring(0, stop);
@@ -331,7 +330,7 @@ Array.prototype.searchFor = function(term) {
 // recapitalize names
 String.prototype.capitalize = function()
 {
-    return this.toLowerCase().replace(/\b./g, function (a) {
+	return this.toLowerCase().replace(/\b./g, function (a) {
 		return a.toUpperCase();
 	});
 };

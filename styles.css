@@ -197,15 +197,16 @@ article .note.left:before {
 }
 
 footer {
+	color: #FFF;
 	font-size: 0.75em;
 	margin: 1rem auto;
 	max-width: 24rem;
 	text-align: center;
+	text-shadow: 0 0.0625em 0 #262626;
 }
 footer .button {
 	background-color: transparent;
 	box-shadow: none;
-	font-style: italic;
 	font-weight: 300;
 	text-shadow: 0 0.0625em 0 #262626;
 }
