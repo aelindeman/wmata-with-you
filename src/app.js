@@ -406,10 +406,13 @@
 					added ++;
 				}
 
-				trains_list.on('accelTap select', function(e) {
+				var reload = function(e) {
 					trains_list.hide();
 					load_trains(station);
-				});
+				};
+
+				trains_list.on('accelTap', reload);
+				trains_list.on('select', reload);
 			} else {
 				trains_list.items(0, [{ title: 'None scheduled' }]);
 			}
@@ -453,10 +456,13 @@
 					added ++;
 				}
 
-				buses_list.on('accelTap select', function(e) {
+				var reload = function(e) {
 					buses_list.hide();
 					load_buses(stop);
-				});
+				};
+
+				buses_list.on('accelTap', reload);
+				buses_list.on('select', reload);
 			} else {
 				buses_list.items(0, [{ title: 'None scheduled' }]);
 			}
@@ -565,7 +571,7 @@
 					items: [{ title: 'Loading...' }]
 				}]
 			});
-		
+
 		incidents.show();
 
 		new Ajax ({
