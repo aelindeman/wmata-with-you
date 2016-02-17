@@ -76,7 +76,7 @@
 		concat_rail: function(station, prettify) {
 			var l = [];
 			for (var i = 1, c; i < 5; i ++) { // LineCode[1-4]
-				if ((c = s['LineCode' + i])) {
+				if ((c = station['LineCode' + i])) {
 					l.push((prettify) ?
 						Helpers.color(c) :
 						c.toLowerCase()
@@ -89,7 +89,7 @@
 		// Concatenates bus routes together
 		// Also removes suffixes from alternate routes
 		concat_bus: function(stop) {
-			return l.Routes
+			return stop.Routes
 				.join(' ')
 				.replace(/((\w+v[0-9]+)(,\s)?|(,\s)?(\w+v[0-9]))/g, '')
 				.toUpperCase();
@@ -119,9 +119,7 @@
 
 		// Converts a 24-hour time to a 12-hour one
 		time_to_12h: function(time) {
-			var halves = time.split(':').map(function(a) {
-				return Math.abs(a.parseInt());
-			});
+			var halves = time.split(':');
 
 			return (halves[0] == 12) ?
 				'12:' + halves[1] + ' PM' :
