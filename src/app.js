@@ -275,8 +275,8 @@
 	}
 
 	// Loads a list of stations & bus stops according to the user's settings
-	function load_saved_stations()
-	{var saved_list = new UI.Menu({
+	function load_saved_stations() {
+		var saved_list = new UI.Menu({
 			highlightBackgroundColor: highlight_color,
 			sections: [{
 				title: (buses_first ? 'Buses' : 'Trains'),
@@ -557,14 +557,15 @@
 
 	// Shows rail advisories
 	function load_incidents() {
-		var incidents_url = Helpers.url('rail.incidents');
-		var incidents = new UI.Menu({
-			highlightBackgroundColor: highlight_color,
-			sections: [{
-				title: 'Advisories',
-				items: [{ title: 'Loading...' }]
-			}]
-		});
+		var incidents_url = Helpers.url('rail.incidents'),
+			incidents = new UI.Menu({
+				highlightBackgroundColor: highlight_color,
+				sections: [{
+					title: 'Advisories',
+					items: [{ title: 'Loading...' }]
+				}]
+			});
+		
 		incidents.show();
 
 		new Ajax ({
@@ -617,7 +618,6 @@
 	var main = new UI.Menu({
 		highlightBackgroundColor: highlight_color,
 		sections: [{
-			// title: "WMATA With You",
 			items: [{
 				title: 'Nearby',
 				icon: 'images/location.png'
