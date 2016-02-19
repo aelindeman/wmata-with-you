@@ -11,7 +11,6 @@
         "media": [
             {
                 "file": "images/menu_icon.png",
-                "menuIcon": true,
                 "name": "IMAGE_MENU_ICON",
                 "type": "bitmap"
             },
@@ -52,6 +51,7 @@
             },
             {
                 "file": "images/metro.png",
+                "menuIcon": true,
                 "name": "IMAGES_METRO_PNG",
                 "type": "bitmap"
             },
@@ -95,7 +95,7 @@
     ],
     "uuid": "59b60dc7-51ff-46af-90f8-5d63c3237487",
     "versionCode": 1,
-    "versionLabel": "2.1",
+    "versionLabel": "2.2",
     "watchapp": {
         "hiddenApp": false,
         "watchface": false
