@@ -96,11 +96,12 @@
     "shortName": "WMATA With You",
     "targetPlatforms": [
         "aplite",
-        "basalt"
+        "basalt",
+        "chalk"
     ],
     "uuid": "59b60dc7-51ff-46af-90f8-5d63c3237487",
     "versionCode": 1,
-    "versionLabel": "2.2",
+    "versionLabel": "2.3",
     "watchapp": {
         "hiddenApp": false,
         "watchface": false
