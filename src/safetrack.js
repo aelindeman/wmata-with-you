@@ -1,8 +1,10 @@
 /*
- * WMATA With You Safetrack Calculator
+ * WMATA With You
+ * SafeTrack events list and calculator functions
  * Alex Lindeman <aelindeman@gmail.com>
  */
 (function() {
+	'use strict';
 
 	function Safetrack() {
 		return this;
@@ -209,14 +211,14 @@
 				return event.affectedLines.indexOf(line.toUpperCase()) > -1;
 			});
 		},
-		
+
 		/**
 		 * Finds if a given event is happening within the next `days` days.
 		 */
 		isSoon: function(event, days) {
 			if (event) {
 				days = days === undefined ? 7 : days;
-				
+
 				var now = new Date(),
 					soon = new Date(now.getTime() + (days * 24 * 3600 * 1000)),
 					begin = new Date(event.startDate),
@@ -224,7 +226,7 @@
 
 				return (soon >= begin && now <= end);
 			}
-			
+
 			return false;
 		},
 	};

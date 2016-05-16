@@ -9,30 +9,9 @@
 	// Pebble.js dependencies
 	var UI = require('ui'),
 		Ajax = require('ajax'),
-		Settings = require('settings');
-
-	// WMATA API key and URLs
-	var wmata = {
-		key: 'tdzzks35mmn4qxjg9mxp324v',
-		api: {
-
-			// WMATA API - bus endpoints
-			bus: {
-				stops: 'https://api.wmata.com/Bus.svc/json/jStops',
-				routes: 'https://api.wmata.com/Bus.svc/json/jRoutes',
-				buses: 'https://api.wmata.com/NextBusService.svc/json/jPredictions'
-			},
-
-			// WMATA API - rail endpoints
-			rail: {
-				stations: 'https://api.wmata.com/Rail.svc/json/jStations',
-				station_info: 'https://api.wmata.com/Rail.svc/json/jStationInfo',
-				station_times: 'https://api.wmata.com/Rail.svc/json/jStationTimes',
-				trains: 'https://api.wmata.com/StationPrediction.svc/json/GetPrediction/',
-				incidents: 'https://api.wmata.com/Incidents.svc/json/Incidents'
-			}
-		}
-	};
+		Settings = require('settings'),
+		Urls = require('urls.js'),
+		Helpers = require('helpers.js');
 
 	var buses_first = parseInt(Settings.option('buses-first')) == 1 || false,
 		highlight_color = Settings.option('selection-color') || 'cadetBlue';
@@ -49,127 +28,6 @@
 		buses_first = parseInt(Settings.option('buses-first')) == 1 || false;
 		highlight_color = Settings.option('selection-color') || 'cadetBlue';
 	});
-
-	// Helper functions
-	var Helpers = {
-
-		// Capitalizes individual words in a string
-		caps: function(str) {
-			return str.toLowerCase().replace(/\b./g, function (a) {
-				return a.toUpperCase();
-			});
-		},
-
-		// Un-abbreviates a line name into the color
-		color: function(line) {
-			switch (String(line).toLowerCase()) {
-				case 'rd':
-					return 'Red';
-				case 'or':
-					return 'Orange';
-				case 'yl':
-					return 'Yellow';
-				case 'gr':
-					return 'Green';
-				case 'bl':
-					return 'Blue';
-				case 'sv':
-					return 'Silver';
-			}
-		},
-
-		// Concatenates a station's lines into an array
-		concat_rail: function(station, prettify) {
-			var l = [];
-			for (var i = 1, c; i < 5; i ++) { // LineCode[1-4]
-				if ((c = station['LineCode' + i])) {
-					l.push((prettify) ?
-						Helpers.color(c) :
-						c.toLowerCase()
-					);
-				}
-			}
-			return l;
-		},
-
-		// Concatenates bus routes together
-		// Also removes suffixes from alternate routes
-		concat_bus: function(stop) {
-			return stop.Routes
-				.join(' ')
-				.replace(/((\w+v[0-9]+)(,\s)?|(,\s)?(\w+v[0-9]))/g, '')
-				.toUpperCase();
-		},
-
-		// Calculates distance between coordinate points
-		distance: function(x1, y1, x2, y2) {
-			var dx = Math.pow(x2 - x1, 2),
-				dy = Math.pow(y2 - y1, 2);
-			return Math.pow(dx + dy, 0.5);
-		},
-		
-		// Formats a date object and returns it in a human-readable format.
-		format_date: function(date, with_time) {
-			// apparently Pebble.js ships with Moment as well, neato
-			var moment = require('vendor/moment');
-			return moment(date).format('MMMM Do' + (with_time ? ' h:mm A' : ''));
-		},
-
-		// Un-abbreviates an arrival time and adds an appropriate suffix
-		time_left: function(time) {
-			switch (String(time).toLowerCase()) {
-				case 'brd':
-					return 'Boarding';
-				case '0':
-				case 'arr':
-					return 'Arriving';
-					
-				case '1':
-					return '1 minute';
-				case '60':
-					return '1 hour';
-					
-				// WMATA sometimes doesn't supply a time when the train hasn't moved in a while
-				// Apparently this is intentional, but will be changed in favor of a new 'IsDelayed' object property in mid-2017
-				case '':
-				
-				// WMATA may also add the 'DLY' status in summer 2016 for SafeTrack rebuilding
-				case 'dly':
-					return 'Delayed';
-			}
-
-			return (time < 60) ?
-				time + ' minutes' :
-				Math.floor(time / 60) + ' hr ' + (time % 60) + ' min';
-		},
-
-		// Converts a 24-hour time to a 12-hour one
-		time_to_12h: function(time) {
-			var halves = time.split(':');
-
-			return (halves[0] == 12) ?
-				'12:' + halves[1] + ' PM' :
-			(halves[0] === 0) ?
-				'12:' + halves[1] + ' AM' :
-			(halves[0] > 12) ?
-				(halves[0] - 12) + ':' + halves[1] + ' PM' :
-				halves[0] + ':' + halves[1] + ' AM';
-		},
-
-		// Generates a URL string from an object of query parameters
-		url: function(endpoint, options) {
-			var base = endpoint.split('.'),
-				url = wmata.api[base[0]][base[1]] + '?api_key=' + wmata.key;
-
-			for (var o in options) {
-				url += '&' + encodeURIComponent(o) + '=' +
-					encodeURIComponent(options[o]);
-			}
-
-			return url;
-		}
-
-	};
 
 	// Finds the stations closest to the user's location
 	function load_closest_stations() {
@@ -189,8 +47,8 @@
 			function (position) {
 				var my_lat = position.coords.latitude,
 					my_lon = position.coords.longitude,
-					stations_url = Helpers.url('rail.stations'),
-					bus_stops_url = Helpers.url('bus.stops', {
+					stations_url = Urls.make('rail.stations'),
+					bus_stops_url = Urls.make('bus.stops', {
 						Lat: my_lat,
 						Lon: my_lon,
 						Radius: 2000
@@ -393,7 +251,7 @@
 
 	// Loads next trains for a station
 	function load_trains(station) {
-		var trains_url = wmata.api.rail.trains + station.Code + '?api_key=' + wmata.key,
+		var trains_url = Urls.make('rail.trains', { station: station });
 			trains_list = new UI.Menu({
 				highlightBackgroundColor: highlight_color,
 				sections: [{
@@ -458,7 +316,7 @@
 
 	// Loads next buses for a stop
 	function load_buses (stop) {
-		var buses_url = Helpers.url('bus.buses', { StopID: stop.StopID }),
+		var buses_url = Urls.make('bus.buses', { StopID: stop.StopID }),
 			buses_list = new UI.Menu({
 				highlightBackgroundColor: highlight_color,
 				sections: [{
@@ -508,8 +366,8 @@
 
 	// Loads information for a station
 	function load_station_info (station) {
-		var station_info_url = Helpers.url('rail.station_info', { StationCode: station.Code }),
-			station_times_url = Helpers.url('rail.station_times', { StationCode: station.Code }),
+		var station_info_url = Urls.make('rail.station_info', { StationCode: station.Code }),
+			station_times_url = Urls.make('rail.station_times', { StationCode: station.Code }),
 			body = '',
 			card = new UI.Card({
 				title: station.Name,
@@ -558,7 +416,7 @@
 	 */
 	function load_bus_stop_info (stop)
 	{
-		var bus_routes_url = Helpers.url('bus.routes'),
+		var bus_routes_url = Urls.make('bus.routes'),
 			body = 'Routes that stop here:\n',
 			card = new UI.Card({
 				title: Helpers.caps(stop.Name),
@@ -589,7 +447,7 @@
 
 	// Shows rail advisories
 	function load_incidents() {
-		var incidents_url = Helpers.url('rail.incidents'),
+		var incidents_url = Urls.make('rail.incidents'),
 			incidents = new UI.Menu({
 				highlightBackgroundColor: highlight_color,
 				sections: [{
