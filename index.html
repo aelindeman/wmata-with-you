@@ -5,7 +5,7 @@
 		<meta charset="utf-8" />
 		<meta name="author" content="Alex Lindeman" />
 		<meta name="created" content="2015-11-02" />
-		<meta name="version" content="1.0.1" />
+		<meta name="version" content="1.1.0" />
 		<meta name="description" content="The configuration page for WMATA With You, a Pebble smartwatch app for public transport in and around Washington, D.C., available at https://apps.getpebble.com/applications/5404f8e0ec33d19e2200008b" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css" />
@@ -28,7 +28,10 @@
 				<article>
 					<h3 class="hidden">Number of closest things</h3>
 					<p>Show <input id="closest-things" name="closest-things" type="number" min="2" max="20" required="required" style="width: 3em" /> of the closest rail stations &amp; bus stops (each)</p>
-					<p class="note">Fewer than 3 won&rsquo;t be useful; more than 10 may make the app slow</p>
+				</article>
+				<article>
+					<h3 class="hidden">SafeTrack warning days</h3>
+					<p>Show SafeTrack rebuilding advisories for <input id="safetrack-warning" type="number" min="0" max="60" required="required" style="width: 3em"/> days in advance</p>
 				</article>
 				<article>
 					<h3 class="hidden">High contrast mode</h3>
@@ -61,7 +64,6 @@
 				<article>
 					<input type="button" id="do-discard" name="do" value="Discard changes" class="button discard-button" />
 					<input type="submit" id="do-submit" name="do" value="Save" class="button save-button" />
-					<p class="note left">You&rsquo;ll need to re-open the app on your watch (if it&rsquo;s open) to see your changes</p>
 				</article>
 			</section>
 		</main>

@@ -11,6 +11,7 @@ var saved_rail = [];
 
 var buses_first_field = $('#buses-first');
 var closest_things_field = $('#closest-things');
+var safetrack_warning_field = $('#safetrack-warning');
 var selection_color_field = $('#selection-color');
 
 /* @end */
@@ -153,6 +154,7 @@ $(document).ready(function() {
 	console.log(localStorage.length > 0 ? 'loading existing settings' : 'loading default settings');
 	buses_first_field.val(localStorage['buses-first'] || 0);
 	closest_things_field.val(localStorage['closest-things'] || 6);
+	safetrack_warning_field.val(localStorage['safetrack-warning'] || 7);
 	selection_color_field.val(localStorage['selection-color'] || 'cadetBlue');
 	try {
 		saved_bus = JSON.parse(localStorage['saved-bus']);
@@ -391,6 +393,7 @@ function get_config_data() {
 	var options = {
 		'buses-first': buses_first_field.val(),
 		'closest-things': closest_things_field.val(),
+		'safetrack-warning': safetrack_warning_field.val(),
 		'selection-color': selection_color_field.val(),
 		'saved-bus': JSON.stringify(saved_bus),
 		'saved-rail': JSON.stringify(saved_rail),
