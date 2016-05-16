@@ -107,6 +107,13 @@
 				dy = Math.pow(y2 - y1, 2);
 			return Math.pow(dx + dy, 0.5);
 		},
+		
+		// Formats a date object and returns it in a human-readable format.
+		format_date: function(date, with_time) {
+			// apparently Pebble.js ships with Moment as well, neato
+			var moment = require('vendor/moment');
+			return moment(date).format('MMMM Do' + (with_time ? ' h:mm A' : ''));
+		},
 
 		// Un-abbreviates an arrival time and adds an appropriate suffix
 		time_left: function(time) {
@@ -600,7 +607,8 @@
 					var incident = data.Incidents[i];
 					incidents.item(0, i, {
 						title: incident.IncidentType,
-						subtitle: incident.Description.substring(0, 31)
+						subtitle: incident.Description.substring(0, 31),
+						info: incident
 					});
 				}
 			} else {
@@ -618,13 +626,17 @@
 		});
 
 		var safetrack = require('safetrack.js'),
-			st_events = safetrack.affectsSoon(),
-			s = safetrack_advisories.length;
+			st_events = safetrack.affectsSoon(30),
+			s = st_events.length;
 
 		if (s > 0) {
 			while (s --) {
 				incidents.item(1, s, {
-					title: incident.workType
+					title: st_events[s].workType,
+					subtitle: (new Date(st_events[s].startDate) > new Date() ?
+						'Starts ' + Helpers.format_date(st_events[s].startDate) :
+						'Ends ' + Helpers.format_date(st_events[s].endDate)),
+					info: st_events[s]
 				});
 			}
 		} else {
@@ -639,14 +651,14 @@
 
 			switch (e.sectionIndex) {
 				case 0:
-					title = data.Incidents[e.itemIndex].IncidentType;
-					body = data.Incidents[e.itemIndex].Description;
+					title = e.item.info.IncidentType;
+					body = e.item.info.Description;
 					break;
 				case 1:
 					title = st_events[e.itemIndex].workType;
-					body = 'From ' + st_events[e.itemIndex].description + '.\n\n' +
-						'Starts ' + st_events[e.itemIndex].startDate + '\n' +
-						'Ends ' + st_events[e.itemIndex].endDate;
+					body = 'From ' + e.item.info.description + '\n\n' +
+						'Starts ' + Helpers.format_date(e.item.info.startDate, true) + '\n' +
+						'Ends ' + Helpers.format_date(e.item.info.endDate, true);
 					break;
 			}
 
