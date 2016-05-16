@@ -46,7 +46,7 @@
 			for (var i = 1, c; i < 5; i ++) { // LineCode[1-4]
 				if ((c = station['LineCode' + i])) {
 					l.push((prettify) ?
-						Helpers.color(c) :
+						this.color(c) :
 						c.toLowerCase()
 					);
 				}

@@ -1,6 +1,8 @@
 /*
  * WMATA With You
  * SafeTrack events list and calculator functions
+ * Via https://www.wmata.com/Images/Mrel/MF_Uploads/SAFETRACK-PUBLIC.pdf
+ * HUGE thank you to James & Jen of @DCMetroHero for compiling this into JSON
  * Alex Lindeman <aelindeman@gmail.com>
  */
 (function() {

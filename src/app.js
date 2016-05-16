@@ -10,8 +10,10 @@
 	var UI = require('ui'),
 		Ajax = require('ajax'),
 		Settings = require('settings'),
+		
 		Urls = require('urls.js'),
-		Helpers = require('helpers.js');
+		Helpers = require('helpers.js'),
+		Safetrack = require('safetrack.js');
 
 	var buses_first = parseInt(Settings.option('buses-first')) == 1 || false,
 		highlight_color = Settings.option('selection-color') || 'cadetBlue';
@@ -251,7 +253,7 @@
 
 	// Loads next trains for a station
 	function load_trains(station) {
-		var trains_url = Urls.make('rail.trains', { station: station });
+		var trains_url = Urls.make('rail.trains', { station: station }),
 			trains_list = new UI.Menu({
 				highlightBackgroundColor: highlight_color,
 				sections: [{
@@ -488,8 +490,7 @@
 			card.show();
 		});
 
-		var safetrack = require('safetrack.js'),
-			st_events = safetrack.affectsSoon(30),
+		var st_events = Safetrack.affectsSoon(Settings.option('safetrack-warning') || 7),
 			s = st_events.length;
 
 		if (s > 0) {
@@ -537,8 +538,11 @@
 	// Displays info about the app
 	function load_about() {
 		var about_card = new UI.Card({
-			title: 'About',
-			body: 'WMATA With You\nversion 2.3\nby Alex Lindeman\nael.me/wwy\n\nBuilt with Pebble.js and the WMATA Transparent Datasets API.',
+			body: 'WMATA With You\n' + 
+				'version 2.4\n' +
+				'by Alex Lindeman\n\n' +
+				'Built with Pebble.js and the WMATA Transparent Datasets API.\n\n' +
+				'SafeTrack advisory data compiled by @DCMetroHero.',
 			scrollable: true
 		});
 		about_card.show();
