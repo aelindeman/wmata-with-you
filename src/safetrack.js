@@ -209,6 +209,24 @@
 				return event.affectedLines.indexOf(line.toUpperCase()) > -1;
 			});
 		},
+		
+		/**
+		 * Finds if a given event is happening within the next `days` days.
+		 */
+		isSoon: function(event, days) {
+			if (event) {
+				days = days === undefined ? 7 : days;
+				
+				var now = new Date(),
+					soon = new Date(now.getTime() + (days * 24 * 3600 * 1000)),
+					begin = new Date(event.startDate),
+					end = new Date(event.endDate);
+
+				return (soon >= begin && now <= end);
+			}
+			
+			return false;
+		},
 	};
 
 	if (typeof module !== 'undefined') {

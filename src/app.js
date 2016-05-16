@@ -118,19 +118,24 @@
 		// Un-abbreviates an arrival time and adds an appropriate suffix
 		time_left: function(time) {
 			switch (String(time).toLowerCase()) {
-				case '---':
-					return 'Eventually';
 				case 'brd':
 					return 'Boarding';
 				case '0':
 				case 'arr':
 					return 'Arriving';
+					
 				case '1':
 					return '1 minute';
 				case '60':
 					return '1 hour';
+					
+				// WMATA sometimes doesn't supply a time when the train hasn't moved in a while
+				// Apparently this is intentional, but will be changed in favor of a new 'IsDelayed' object property in mid-2017
 				case '':
-					return 'Soon';
+				
+				// WMATA may also add the 'DLY' status in summer 2016 for SafeTrack rebuilding
+				case 'dly':
+					return 'Delayed';
 			}
 
 			return (time < 60) ?
