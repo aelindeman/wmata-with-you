@@ -63,12 +63,18 @@
 		// Un-abbreviates a line name into the color
 		color: function(line) {
 			switch (String(line).toLowerCase()) {
-				case 'rd': return 'Red';
-				case 'or': return 'Orange';
-				case 'yl': return 'Yellow';
-				case 'gr': return 'Green';
-				case 'bl': return 'Blue';
-				case 'sv': return 'Silver';
+				case 'rd':
+					return 'Red';
+				case 'or':
+					return 'Orange';
+				case 'yl':
+					return 'Yellow';
+				case 'gr':
+					return 'Green';
+				case 'bl':
+					return 'Blue';
+				case 'sv':
+					return 'Silver';
 			}
 		},
 
@@ -105,11 +111,19 @@
 		// Un-abbreviates an arrival time and adds an appropriate suffix
 		time_left: function(time) {
 			switch (String(time).toLowerCase()) {
-				case '---': return 'Eventually';
-				case 'brd': return 'Boarding';
-				case '0': case 'arr': return 'Arriving';
-				case '1': return '1 minute';
-				case '60': return '1 hour';
+				case '---':
+					return 'Eventually';
+				case 'brd':
+					return 'Boarding';
+				case '0':
+				case 'arr':
+					return 'Arriving';
+				case '1':
+					return '1 minute';
+				case '60':
+					return '1 hour';
+				case '':
+					return 'Soon';
 			}
 
 			return (time < 60) ?
@@ -569,6 +583,9 @@
 				sections: [{
 					title: 'Advisories',
 					items: [{ title: 'Loading...' }]
+				}, {
+					title: 'Rebuilding',
+					items: [{ title: 'Loading...' }]
 				}]
 			});
 
@@ -586,15 +603,6 @@
 						subtitle: incident.Description.substring(0, 31)
 					});
 				}
-
-				incidents.on('select', function (e) {
-					var card = new UI.Card({
-						title: data.Incidents[e.itemIndex].IncidentType,
-						body: data.Incidents[e.itemIndex].Description,
-						scrollable: true
-					});
-					card.show();
-				});
 			} else {
 				incidents.items(0, [{ title: 'No advisories' }]);
 			}
@@ -606,6 +614,47 @@
 			});
 			console.log('Error getting advisories (' + code + '): ' + JSON.stringify(error));
 			incidents.hide();
+			card.show();
+		});
+
+		var safetrack = require('safetrack.js'),
+			st_events = safetrack.affectsSoon(),
+			s = safetrack_advisories.length;
+
+		if (s > 0) {
+			while (s --) {
+				incidents.item(1, s, {
+					title: incident.workType
+				});
+			}
+		} else {
+			incidents.item(1, 0, {
+				title: 'None planned',
+			});
+		}
+
+		incidents.on('select', function (e) {
+			var title = '',
+				body = '';
+
+			switch (e.sectionIndex) {
+				case 0:
+					title = data.Incidents[e.itemIndex].IncidentType;
+					body = data.Incidents[e.itemIndex].Description;
+					break;
+				case 1:
+					title = st_events[e.itemIndex].workType;
+					body = 'From ' + st_events[e.itemIndex].description + '.\n\n' +
+						'Starts ' + st_events[e.itemIndex].startDate + '\n' +
+						'Ends ' + st_events[e.itemIndex].endDate;
+					break;
+			}
+
+			var card = new UI.Card({
+				title: title,
+				body: body,
+				scrollable: true
+			});
 			card.show();
 		});
 	}
