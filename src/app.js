@@ -9,37 +9,32 @@
 	// Pebble.js dependencies
 	var UI = require('ui'),
 		Ajax = require('ajax'),
-		Settings = require('settings'),
-		
-		Urls = require('urls.js'),
+		Settings = require('settings');
+
+	Settings.config({
+		url: 'http://aelindeman.github.io/wmata-with-you/'
+	});
+
+	// WMATA With You dependencies
+	var Urls = require('urls.js'),
 		Helpers = require('helpers.js'),
 		Safetrack = require('safetrack.js');
 
-	var buses_first = parseInt(Settings.option('buses-first')) == 1 || false,
-		highlight_color = Settings.option('selection-color') || 'cadetBlue';
-
-	// Initialize configuration
-	Settings.config({
-		url: 'http://aelindeman.github.io/wmata-with-you/'
-	}, function (e) {
-		console.log('opening config: ' + JSON.stringify(e));
-	}, function (e) {
-		console.log('closing config: ' + JSON.stringify(e));
-
-		// update global preferences on close
-		buses_first = parseInt(Settings.option('buses-first')) == 1 || false;
-		highlight_color = Settings.option('selection-color') || 'cadetBlue';
-	});
+	// Return a configuration item, with optional default value if unset
+	function config(key, default) {
+		var value = Settings.option(key);
+		return (value != null && value != undefined) ? value : default;
+	}
 
 	// Finds the stations closest to the user's location
 	function load_closest_stations() {
 		var stations_list = new UI.Menu({
-			highlightBackgroundColor: highlight_color,
+			highlightBackgroundColor: config('selection-color', 'cadetBlue'),
 			sections: [{
-				title: (buses_first ? 'Buses' : 'Trains'),
+				title: (config('buses-first') ? 'Buses' : 'Trains'),
 				items: [{ title: 'Loading...' }]
 			}, {
-				title: (buses_first ? 'Trains' : 'Buses'),
+				title: (config('buses-first') ? 'Trains' : 'Buses'),
 				items: [{ title: 'Loading...' }]
 			}]
 		});
@@ -71,7 +66,7 @@
 				}
 
 				// maximum number of closest stations/bus stops to list (per group)
-				var max = parseInt(Settings.option('closest-things')) || 6;
+				var max = parseInt(config('closest-things', 6));
 
 				// load rail stations
 				new Ajax({
@@ -82,14 +77,14 @@
 						data.Stations.sort(sort_by_distance);
 						for (var s = 0; s < max; s ++) {
 							var station = data.Stations[s];
-							stations_list.item((buses_first ? 1 : 0), s, {
+							stations_list.item((config('buses-first') ? 1 : 0), s, {
 								title: station.Name,
 								subtitle: Helpers.concat_rail(station, true).join(', '),
 								info: station // stash station info in menu element to use on select/long press
 							});
 						}
 					} else {
-						stations_list.items((buses_first ? 1 : 0), [{ title: 'No stations nearby' }]);
+						stations_list.items((config('buses-first') ? 1 : 0), [{ title: 'No stations nearby' }]);
 					}
 				}, ajax_error);
 
@@ -104,7 +99,7 @@
 						for (var s in data.Stops) {
 							var stop = data.Stops[s];
 							if (String(stop.StopID) != '0') {
-								stations_list.item((buses_first ? 0 : 1), added, {
+								stations_list.item((config('buses-first') ? 0 : 1), added, {
 									title: Helpers.caps(stop.Name),
 									subtitle: Helpers.concat_bus(stop),
 									info: stop
@@ -115,7 +110,7 @@
 							if (added > max) break;
 						}
 					} else {
-						stations_list.items((buses_first ? 0 : 1), [{ title: 'No stops nearby' }]);
+						stations_list.items((config('buses-first') ? 0 : 1), [{ title: 'No stops nearby' }]);
 					}
 				}, ajax_error);
 			}, function (error) {
@@ -136,10 +131,10 @@
 		stations_list.on('select', function (e) {
 			if (e.item.hasOwnProperty('info')) {
 				switch (e.sectionIndex) {
-					case (buses_first ? 1 : 0):
+					case (config('buses-first') ? 1 : 0):
 						load_trains(e.item.info);
 						break;
-					case (buses_first ? 0 : 1):
+					case (config('buses-first') ? 0 : 1):
 						load_buses(e.item.info);
 						break;
 				}
@@ -149,10 +144,10 @@
 		stations_list.on('longSelect', function (e) {
 			if (e.item.hasOwnProperty('info')) {
 				switch (e.sectionIndex) {
-					case (buses_first ? 1 : 0):
+					case (config('buses-first') ? 1 : 0):
 						load_station_info(e.item.info);
 						break;
-					case (buses_first ? 0 : 1):
+					case (config('buses-first') ? 0 : 1):
 						load_bus_stop_info(e.item.info);
 						break;
 				}
@@ -163,12 +158,12 @@
 	// Loads a list of stations & bus stops according to the user's settings
 	function load_saved_stations() {
 		var saved_list = new UI.Menu({
-			highlightBackgroundColor: highlight_color,
+			highlightBackgroundColor: config('selection-color', 'cadetBlue'),
 			sections: [{
-				title: (buses_first ? 'Buses' : 'Trains'),
+				title: (config('buses-first') ? 'Buses' : 'Trains'),
 				items: [{ title: 'Loading...' }]
 			}, {
-				title: (buses_first ? 'Trains' : 'Buses'),
+				title: (config('buses-first') ? 'Trains' : 'Buses'),
 				items: [{ title: 'Loading...' }]
 			}]
 		});
@@ -176,7 +171,7 @@
 
 		var saved_stations;
 		try {
-			saved_stations = JSON.parse(Settings.option('saved-rail'));
+			saved_stations = JSON.parse(config('saved-rail', '[]'));
 		} catch (e) {
 			saved_stations = [];
 		}
@@ -184,19 +179,19 @@
 		if (saved_stations !== undefined && saved_stations.length > 0) {
 			for (var t in saved_stations) {
 				var station = saved_stations[t];
-				saved_list.item((buses_first ? 1 : 0), t, {
+				saved_list.item((config('buses-first') ? 1 : 0), t, {
 					title: station.Name,
 					subtitle: Helpers.concat_rail(station, true).join(', '),
 					info: station // stash station info in menu element to use on select/long press
 				});
 			}
 		} else {
-			saved_list.item((buses_first ? 1 : 0), 0, { title: 'None saved' });
+			saved_list.item((config('buses-first') ? 1 : 0), 0, { title: 'None saved' });
 		}
 
 		var saved_stops;
 		try {
-			saved_stops = JSON.parse(Settings.option('saved-bus'));
+			saved_stops = JSON.parse(config('saved-bus', '[]'));
 		} catch (e) {
 			saved_stops = [];
 		}
@@ -204,14 +199,14 @@
 		if (saved_stops !== undefined && saved_stops.length > 0) {
 			for (var b in saved_stops) {
 				var stop = saved_stops[b];
-				saved_list.item((buses_first ? 0 : 1), b, {
+				saved_list.item((config('buses-first') ? 0 : 1), b, {
 					title: Helpers.caps(stop.Name),
 					subtitle: Helpers.concat_bus(stop),
 					info: stop
 				});
 			}
 		} else {
-			saved_list.item((buses_first ? 0 : 1), 0, { title: 'None saved' });
+			saved_list.item((config('buses-first') ? 0 : 1), 0, { title: 'None saved' });
 		}
 
 		var invalid_setting = (saved_stations === undefined && saved_stops === undefined);
@@ -227,10 +222,10 @@
 		saved_list.on('select', function (e) {
 			if (e.item.hasOwnProperty('info')) {
 				switch (e.sectionIndex) {
-					case (buses_first ? 1 : 0):
+					case (config('buses-first') ? 1 : 0):
 						load_trains(e.item.info);
 						break;
-					case (buses_first ? 0 : 1):
+					case (config('buses-first') ? 0 : 1):
 						load_buses(e.item.info);
 						break;
 				}
@@ -240,10 +235,10 @@
 		saved_list.on('longSelect', function (e) {
 			if (e.item.hasOwnProperty('info')) {
 				switch (e.sectionIndex) {
-					case (buses_first ? 1 : 0):
+					case (config('buses-first') ? 1 : 0):
 						load_station_info(e.item.info);
 						break;
-					case (buses_first ? 0 : 1):
+					case (config('buses-first') ? 0 : 1):
 						load_bus_stop_info(e.item.info);
 						break;
 				}
@@ -255,7 +250,7 @@
 	function load_trains(station) {
 		var trains_url = Urls.make('rail.trains', { station: station }),
 			trains_list = new UI.Menu({
-				highlightBackgroundColor: highlight_color,
+				highlightBackgroundColor: config('selection-color', 'cadetBlue'),
 				sections: [{
 					title: station.Name,
 					items: [{ title: 'Loading...' }]
@@ -320,7 +315,7 @@
 	function load_buses (stop) {
 		var buses_url = Urls.make('bus.buses', { StopID: stop.StopID }),
 			buses_list = new UI.Menu({
-				highlightBackgroundColor: highlight_color,
+				highlightBackgroundColor: config('selection-color', 'cadetBlue'),
 				sections: [{
 					title: Helpers.caps(stop.Name),
 					items: [{ title: 'Loading...' }]
@@ -451,7 +446,7 @@
 	function load_incidents() {
 		var incidents_url = Urls.make('rail.incidents'),
 			incidents = new UI.Menu({
-				highlightBackgroundColor: highlight_color,
+				highlightBackgroundColor: config('selection-color', 'cadetBlue'),
 				sections: [{
 					title: 'Advisories',
 					items: [{ title: 'Loading...' }]
@@ -490,7 +485,7 @@
 			card.show();
 		});
 
-		var st_events = Safetrack.affectsSoon(Settings.option('safetrack-warning') || 7),
+		var st_events = Safetrack.affectsSoon(config('safetrack-warning', 7)),
 			s = st_events.length;
 
 		if (s > 0) {
@@ -538,7 +533,7 @@
 	// Displays info about the app
 	function load_about() {
 		var about_card = new UI.Card({
-			body: 'WMATA With You\n' + 
+			body: 'WMATA With You\n' +
 				'version 2.4\n' +
 				'by Alex Lindeman\n\n' +
 				'Built with Pebble.js and the WMATA Transparent Datasets API.\n\n' +
@@ -550,7 +545,7 @@
 
 	// Run the main UI
 	var main = new UI.Menu({
-		highlightBackgroundColor: highlight_color,
+		highlightBackgroundColor: config('selection-color', 'cadetBlue'),
 		sections: [{
 			items: [{
 				title: 'Nearby',
