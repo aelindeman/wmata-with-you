@@ -113,12 +113,12 @@
 			var halves = time.split(':');
 
 			return (halves[0] == 12) ?
-				'12:' + halves[1] + ' PM' :
+				'12:' + halves[1] + ' pm' :
 			(halves[0] === 0) ?
-				'12:' + halves[1] + ' AM' :
+				'12:' + halves[1] + ' am' :
 			(halves[0] > 12) ?
-				String(halves[0] - 12).replace(/00/, '12') + ':' + halves[1] + ' PM' :
-				String(halves[0]).replace('00', '12').replace(/^0/, '') + ':' + halves[1] + ' AM';
+				String(halves[0] - 12).replace(/00/, '12') + ':' + halves[1] + ' pm' :
+				String(halves[0]).replace('00', '12').replace(/^0/, '') + ':' + halves[1] + ' am';
 		},
 
 	};
