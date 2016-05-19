@@ -367,7 +367,7 @@
 	function load_station_info (station) {
 		var station_info_url = Urls.make('rail.station_info', { StationCode: station.Code }),
 			station_times_url = Urls.make('rail.station_times', { StationCode: station.Code }),
-			body = '%safetrack%%address%\n\n' + 'Opens at %opens%\n' + 'Last train at %closes%',
+			body = '%address%\n\n' + 'Opens at %opens%\n' + 'Last train at %closes%',
 			card = new UI.Card({
 				title: station.Name,
 				subtitle: Helpers.concat_rail(station, true).join(', '),
@@ -377,21 +377,19 @@
 
 		card.show();
 		
-		var affected_by_safetrack = Safetrack.affectsStation(station.Code),
-			s = affected_by_safetrack.length;
+		var st_station = Safetrack.affectsStation(station.Code).filter(function(e, i) {
+				return Safetrack.isSoon(e, config('safetrack-warning', 7));
+			}),
+			s = st_station.length;
 		
 		if (s > 0) {
-			var safetrack_plans = '';
+			var st_plans = 'SafeTrack rebuilding:\n';
 			while (s --) {
-				var e = affected_by_safetrack[s];
-				if (Safetrack.isSoon(e, config('safetrack-warning', 7))) {
-					safetrack_plans = safetrack_plans + '\n\n' + e.description + ' from ' + Helpers.format_date(e.startDate) + ' to ' + Helpers.format_date(e.endDate);
-				}
+				var e = st_station[s];
+				st_plans = st_plans + e.description + ' from ' + Helpers.format_date(e.startDate) + ' to ' + Helpers.format_date(e.endDate) + '\n\n';
 			}
 			
-			body = body.replace('%safetrack%', safetrack_plans);
-		} else {
-			body = body.replace('%safetrack%', '');
+			body = st_plans + body;
 		}
 		
 		card.body(body);
@@ -518,14 +516,14 @@
 					title: st_events[s].description,
 					subtitle: (new Date(st_events[s].startDate) > new Date() ?
 						'Starts ' + Helpers.format_date(st_events[s].startDate) :
-						'In progress, ends ' + Helpers.format_date(st_events[s].endDate)),
+						'Ends ' + Helpers.format_date(st_events[s].endDate)),
 					info: st_events[s]
 				});
 			}
 		} else {
 			incidents.item(1, 0, {
 				title: 'None scheduled',
-				subtitle: 'in next ' + String(st_lookahead) + Helpers.plural(st_lookahead, ' days', ' day')
+				subtitle: 'for next ' + String(st_lookahead) + Helpers.plural(st_lookahead, ' days', ' day')
 			});
 		}
 

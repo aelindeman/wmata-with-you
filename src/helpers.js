@@ -72,7 +72,7 @@
 
 		// Formats a date object and returns it in a human-readable format.
 		format_date: function(date, with_time) {
-			return Moment(date).format('MMM. Do' + (with_time ? ' h:mm A' : ''));
+			return Moment(date).format('MMM. Do' + (with_time ? ' h:mm a' : ''));
 		},
 		
 		// Returns the second argument if the first is equal to 1, or the third if it is not
@@ -117,8 +117,8 @@
 			(halves[0] === 0) ?
 				'12:' + halves[1] + ' AM' :
 			(halves[0] > 12) ?
-				(halves[0] - 12) + ':' + halves[1] + ' PM' :
-				halves[0] + ':' + halves[1] + ' AM';
+				String(halves[0] - 12).replace(/00/, '12') + ':' + halves[1] + ' PM' :
+				String(halves[0]).replace('00', '12').replace(/^0/, '') + ':' + halves[1] + ' AM';
 		},
 
 	};
