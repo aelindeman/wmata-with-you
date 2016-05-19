@@ -21,9 +21,9 @@
 		Safetrack = require('safetrack.js');
 
 	// Return a configuration item, with optional default value if unset
-	function config(key, default) {
+	function config(key, def) {
 		var value = Settings.option(key);
-		return (value != null && value != undefined) ? value : default;
+		return (value !== null && value !== undefined) ? value : def;
 	}
 
 	// Finds the stations closest to the user's location
@@ -258,13 +258,15 @@
 			});
 
 		trains_list.show();
+		
+		var offset = 0;
 
 		new Ajax({
 			url: trains_url,
 			type: 'json'
 		}, function (data) {
 			if (data.Trains.length > 0) {
-				var added = 0;
+				var added = offset;
 
 				for (var t in data.Trains) {
 					var train = data.Trains[t];
@@ -365,7 +367,7 @@
 	function load_station_info (station) {
 		var station_info_url = Urls.make('rail.station_info', { StationCode: station.Code }),
 			station_times_url = Urls.make('rail.station_times', { StationCode: station.Code }),
-			body = '',
+			body = '%safetrack%%address%\n\n' + 'Opens at %opens%\n' + 'Last train at %closes%',
 			card = new UI.Card({
 				title: station.Name,
 				subtitle: Helpers.concat_rail(station, true).join(', '),
@@ -374,16 +376,35 @@
 			});
 
 		card.show();
+		
+		var affected_by_safetrack = Safetrack.affectsStation(station.Code),
+			s = affected_by_safetrack.length;
+		
+		if (s > 0) {
+			var safetrack_plans = '';
+			while (s --) {
+				var e = affected_by_safetrack[s];
+				if (Safetrack.isSoon(e, config('safetrack-warning', 7))) {
+					safetrack_plans = safetrack_plans + '\n\n' + e.description + ' from ' + Helpers.format_date(e.startDate) + ' to ' + Helpers.format_date(e.endDate);
+				}
+			}
+			
+			body = body.replace('%safetrack%', safetrack_plans);
+		} else {
+			body = body.replace('%safetrack%', '');
+		}
+		
+		card.body(body);
 
 		new Ajax({
 			url: station_info_url,
 			type: 'json'
 		}, function (station_data) {
-			body = station_data.Address.Street + '\n' + station_data.Address.City + ', ' + station_data.Address.State + '\n' + body;
+			body = body.replace('%address%', station_data.Address.Street + '\n' + station_data.Address.City + ', ' + station_data.Address.State);
 			card.body(body);
 		}, function (error, code) {
 			console.log('Error getting station info (' + code + '): ' + JSON.stringify(error));
-			body = 'Error getting station info.\n' + body;
+			body = body.replace('%address%', 'Unknown address');
 			card.body(body);
 		});
 
@@ -399,11 +420,13 @@
 			var opens_at = Helpers.time_to_12h(times_data.StationTimes[0][today].OpeningTime),
 				last_train = Helpers.time_to_12h(times_data.StationTimes[0][today].LastTrains[0].Time);
 
-			body = body + '\nOpens: ' + opens_at  + '\nLast train: ' + last_train;
+			body = body.replace('%opens%', opens_at)
+				.replace('%closes%', last_train);
 			card.body(body);
 		}, function (error, code) {
 			console.log('Error getting station open/close times (' + code + '): ' + error);
-			body = body + '\nError getting station open/close times.';
+			body = body.replace('%opens%', 'unknown')
+			.replace('%closes%', 'unknown');
 			card.body(body);
 		});
 	}
@@ -451,7 +474,7 @@
 					title: 'Advisories',
 					items: [{ title: 'Loading...' }]
 				}, {
-					title: 'Rebuilding',
+					title: 'SafeTrack rebuilding',
 					items: [{ title: 'Loading...' }]
 				}]
 			});
@@ -485,48 +508,48 @@
 			card.show();
 		});
 
-		var st_events = Safetrack.affectsSoon(config('safetrack-warning', 7)),
+		var st_lookahead = config('safetrack-warning', 7),
+			st_events = Safetrack.affectsSoon(st_lookahead),
 			s = st_events.length;
 
 		if (s > 0) {
 			while (s --) {
 				incidents.item(1, s, {
-					title: st_events[s].workType,
+					title: st_events[s].description,
 					subtitle: (new Date(st_events[s].startDate) > new Date() ?
 						'Starts ' + Helpers.format_date(st_events[s].startDate) :
-						'Ends ' + Helpers.format_date(st_events[s].endDate)),
+						'In progress, ends ' + Helpers.format_date(st_events[s].endDate)),
 					info: st_events[s]
 				});
 			}
 		} else {
 			incidents.item(1, 0, {
-				title: 'None planned',
+				title: 'None scheduled',
+				subtitle: 'in next ' + String(st_lookahead) + Helpers.plural(st_lookahead, ' days', ' day')
 			});
 		}
 
 		incidents.on('select', function (e) {
-			var title = '',
-				body = '';
-
-			switch (e.sectionIndex) {
-				case 0:
-					title = e.item.info.IncidentType;
-					body = e.item.info.Description;
-					break;
-				case 1:
-					title = st_events[e.itemIndex].workType;
-					body = 'From ' + e.item.info.description + '\n\n' +
-						'Starts ' + Helpers.format_date(e.item.info.startDate, true) + '\n' +
-						'Ends ' + Helpers.format_date(e.item.info.endDate, true);
-					break;
+			if (e.item.hasOwnProperty('info')) {
+				var card = new UI.Card({
+					scrollable: true
+				});
+				
+				switch (e.sectionIndex) {
+					case 0:
+						card.title(e.item.info.IncidentType);
+						card.body(e.item.info.Description);
+						break;
+					case 1:
+						card.title(st_events[e.itemIndex].description);
+						card.body('From ' + e.item.info.location + '\n\n' +
+							'Starts ' + Helpers.format_date(e.item.info.startDate, true) + '\n' +
+							'Ends ' + Helpers.format_date(e.item.info.endDate, true));
+						break;
+				}
+				
+				card.show();
 			}
-
-			var card = new UI.Card({
-				title: title,
-				body: body,
-				scrollable: true
-			});
-			card.show();
 		});
 	}
 
@@ -536,8 +559,7 @@
 			body: 'WMATA With You\n' +
 				'version 2.4\n' +
 				'by Alex Lindeman\n\n' +
-				'Built with Pebble.js and the WMATA Transparent Datasets API.\n\n' +
-				'SafeTrack advisory data compiled by @DCMetroHero.',
+				'Built with Pebble.js and the WMATA Transparent Datasets API.',
 			scrollable: true
 		});
 		about_card.show();

@@ -1,8 +1,6 @@
 /*
  * WMATA With You
  * SafeTrack events list and calculator functions
- * Via https://www.wmata.com/Images/Mrel/MF_Uploads/SAFETRACK-PUBLIC.pdf
- * HUGE thank you to James & Jen of @DCMetroHero for compiling this into JSON
  * Alex Lindeman <aelindeman@gmail.com>
  */
 (function() {
@@ -15,117 +13,140 @@
 	Safetrack.prototype = {
 		events: [
 			{
-				description: 'Franconia to Van Dorn',
-				workType: 'Continuous single-tracking',
-				startDate: '2016-06-04T00:00:00-04:00',
-				endDate: '2016-06-19T23:59:59-04:00',
-				directlyAffectedStations: ['J03', 'J02'],
-				affectedLines: ['BL', 'YL+']
-			}, {
-				description: 'Greenbelt to College Park',
-				workType: 'Continuous single-tracking',
-				startDate: '2016-06-20T00:00:00-04:00',
-				endDate: '2016-07-03T23:59:59-04:00',
-				directlyAffectedStations: ['E09', 'E10'],
-				affectedLines: ['GR', 'YL+']
-			}, {
-				description: 'National Airport to Braddock Road',
-				workType: 'Full shutdown',
-				startDate: '2016-07-05T22:00:00-04:00',
-				endDate: '2016-07-12T23:59:59-04:00',
-				directlyAffectedStations: ['C12', 'C10'],
-				affectedLines: ['BL', 'YL', 'YL+']
-			}, {
-				description: 'National Airport to Pentagon City',
-				workType: 'Full shutdown',
-				startDate: '2016-07-12T00:00:00-04:00',
-				endDate: '2016-07-19T23:59:59-04:00',
-				directlyAffectedStations: ['C10', 'C09', 'C08'],
-				affectedLines: ['BL', 'YL', 'YL+']
-			}, {
-				description: 'Greenbelt to College Park',
-				workType: 'Continuous single-tracking',
-				startDate: '2016-07-20T00:00:00-04:00',
-				endDate: '2016-07-31T23:59:59-04:00',
-				directlyAffectedStations: ['E09', 'E10'],
-				affectedLines: ['GR', 'YL+']
-			}, {
-				description: 'Takoma to Silver Spring',
-				workType: 'Continuous single-tracking',
-				startDate: '2016-08-01T00:00:00-04:00',
-				endDate: '2016-08-08T23:59:59-04:00',
-				directlyAffectedStations: ['B07', 'B08'],
-				affectedLines: ['RD']
-			}, {
-				description: 'Shady Grove to Twinbrook',
-				workType: 'Continuous single-tracking',
-				startDate: '2016-08-09T00:00:00-04:00',
-				endDate: '2016-08-19T23:59:59-04:00',
-				directlyAffectedStations: ['A15', 'A14', 'A13'],
-				affectedLines: ['RD']
-			}, {
-				description: 'Eastern Market to Minnesota/Benning',
-				workType: 'Full shutdown',
-				startDate: '2016-08-20T00:00:00-04:00',
-				endDate: '2016-09-06T23:59:59-04:00',
-				directlyAffectedStations: ['D06', 'D07', 'D08', 'D09', 'G01'],
-				affectedLines: ['OR', 'BL', 'SV']
-			}, {
-				description: 'Vienna to West Falls Church',
-				workType: 'Continuous single-tracking',
-				startDate: '2016-09-09T00:00:00-04:00',
-				endDate: '2016-10-21T23:59:59-04:00',
-				directlyAffectedStations: ['K08', 'K07', 'K06'],
-				affectedLines: ['OR']
-			}, {
-				description: 'NoMa to Fort Totten',
-				workType: 'Full shutdown',
-				startDate: '2016-10-09T00:00:00-04:00',
-				endDate: '2016-11-02T23:59:59-04:00',
-				directlyAffectedStations: ['B35', 'B04', 'B05', 'B06'],
-				affectedLines: ['RD']
-			}, {
-				description: 'West Falls Church to East Falls Church',
-				workType: 'Continuous single-tracking',
-				startDate: '2016-11-02T00:00:00-04:00',
-				endDate: '2016-11-12T23:59:59-05:00',
-				directlyAffectedStations: ['K06', 'K05'],
-				affectedLines: ['OR', 'SV']
-			}, {
-				description: 'East Falls Church to Ballston',
-				workType: 'Continuous single-tracking',
-				startDate: '2016-11-12T00:00:00-05:00',
-				endDate: '2016-12-05T23:59:59-05:00',
-				directlyAffectedStations: ['K05', 'K04'],
-				affectedLines: ['OR', 'SV']
-			}, {
-				description: 'Pentagon to Rosslyn',
-				workType: 'Full shutdown',
-				startDate: '2016-12-06T00:00:00-05:00',
-				endDate: '2016-12-24T23:59:59-05:00',
-				directlyAffectedStations: ['C07', 'C06', 'C05'],
-				affectedLines: ['BL', 'YL', 'YL+', 'OR', 'SV']
-			}, {
-				description: 'Friendship Heights to Medical Center',
-				workType: 'Single-tracking after 8pm',
-				startDate: '2017-01-02T20:00:00-05:00',
-				endDate: '2017-03-07T23:59:59-05:00',
-				directlyAffectedStations: ['A10', 'A09', 'A08'],
-				affectedLines: ['RD']
-			}, {
-				description: 'West Falls Church to East Falls Church',
-				workType: 'Continuous single-tracking',
-				startDate: '2017-03-06T00:00:00-05:00',
-				endDate: '2017-03-14T23:59:59-04:00',
-				directlyAffectedStations: ['K06', 'K05'],
-				affectedLines: ['OR', 'SV']
-			}, {
-				description: 'Braddock Road to Huntington/Van Dorn',
-				workType: 'Continuous single-tracking',
-				startDate: '2017-04-16T00:00:00-04:00',
-				endDate: '2017-05-08T23:59:59-04:00',
-				directlyAffectedStations: ['C12', 'C13', 'C14', 'C15', 'J02'],
-				affectedLines: ['YL', 'YL+', 'BL']
+				"location": "Ballston-MU to East Falls Church",
+				"description": "Single-tracking",
+				"startDate": "2016-06-04T00:00:00-04:00",
+				"endDate": "2016-06-16T23:59:59-04:00",
+				"stationsAffected": ["K04", "K05"],
+				"linesAffected": ["OR", "SV"]
+			},
+			{
+				"location": "Eastern Market to Minnesota Ave and Benning Road",
+				"description": "Shutdown",
+				"startDate": "2016-06-18T00:00:00-04:00",
+				"endDate": "2016-07-03T23:59:59-04:00",
+				"stationsAffected": ["D06", "D07", "D08", "D09", "G01"],
+				"linesAffected": ["OR", "SV", "BL"]
+			},
+			{
+				"location": "Ronald Reagan Washington National Airport to Braddock Rd",
+				"description": "Shutdown",
+				"startDate": "2016-07-05T20:00:00-04:00",
+				"endDate": "2016-07-11T23:59:59-04:00",
+				"stationsAffected": ["C10", "C12"],
+				"linesAffected": ["YL", "BL"]
+			},
+			{
+				"location": "Ronald Reagan Washington National Airport to Pentagon City",
+				"description": "Shutdown",
+				"startDate": "2016-07-12T00:00:00-04:00",
+				"endDate": "2016-07-18T23:59:59-04:00",
+				"stationsAffected": ["C10", "C09", "C08"],
+				"linesAffected": ["YL", "BL"]
+			},
+			{
+				"location": "Ballston-MU to East Falls Church",
+				"description": "Single-tracking",
+				"startDate": "2016-07-20T00:00:00-04:00",
+				"endDate": "2016-07-31T23:59:59-04:00",
+				"stationsAffected": ["K04", "K05"],
+				"linesAffected": ["OR", "SV"]
+			},
+			{
+				"location": "Takoma to Silver Spring",
+				"description": "Single-tracking",
+				"startDate": "2016-08-01T00:00:00-04:00",
+				"endDate": "2016-08-07T23:59:59-04:00",
+				"stationsAffected": ["B07", "B08"],
+				"linesAffected": ["RD"]
+			},
+			{
+				"location": "Shady Grove to Twinbrook",
+				"description": "Single-tracking",
+				"startDate": "2016-08-09T00:00:00-04:00",
+				"endDate": "2016-08-18T23:59:59-04:00",
+				"stationsAffected": ["A15", "A14", "A13"],
+				"linesAffected": ["RD"]
+			},
+			{
+				"location": "Franconia-Springfield to Van Dorn Street",
+				"description": "Single-tracking",
+				"startDate": "2016-08-20T00:00:00-04:00",
+				"endDate": "2016-09-05T23:59:59-04:00",
+				"stationsAffected": ["J03", "J02"],
+				"linesAffected": ["BL", "YL"]
+			},
+			{
+				"location": "Vienna/Fairfax-GMU to West Falls Church-VT/UVA",
+				"description": "Single-tracking",
+				"startDate": "2016-09-09T00:00:00-04:00",
+				"endDate": "2016-10-20T23:59:59-04:00",
+				"stationsAffected": ["K08", "K07", "K06"],
+				"linesAffected": ["OR"]
+			},
+			{
+				"location": "Fort Totten to NoMa-Gallaudet U",
+				"description": "Shutdown",
+				"startDate": "2016-10-10T00:00:00-04:00",
+				"endDate": "2016-11-01T23:59:59-04:00",
+				"stationsAffected": ["B06", "E06", "B05", "B04", "B35"],
+				"linesAffected": ["RD"]
+			},
+			{
+				"location": "East Falls Church to West Falls Church-VT/UVA",
+				"description": "Single-tracking",
+				"startDate": "2016-11-02T22:00:00-04:00",
+				"endDate": "2016-11-11T23:59:59-05:00",
+				"stationsAffected": ["K05", "K06"],
+				"linesAffected": ["OR", "SV"]
+			},
+			{
+				"location": "Greenbelt to College Park-U of MD",
+				"description": "Single-tracking",
+				"startDate": "2016-11-12T00:00:00-05:00",
+				"endDate": "2016-12-06T23:59:59-05:00",
+				"stationsAffected": ["E10", "E09"],
+				"linesAffected": ["GR", "YL"]
+			},
+			{
+				"location": "Rosslyn to Pentagon",
+				"description": "Shutdown",
+				"startDate": "2016-12-07T00:00:00-05:00",
+				"endDate": "2016-12-16T23:59:59-05:00",
+				"stationsAffected": ["C05", "C06", "C07"],
+				"linesAffected": ["BL"]
+			},
+			{
+				"location": "Rosslyn to Pentagon",
+				"description": "Shutdown",
+				"startDate": "2016-12-17T10:00:00-05:00",
+				"endDate": "2016-12-24T23:59:59-05:00",
+				"stationsAffected": ["C05", "C06", "C07"],
+				"linesAffected": ["BL"]
+			},
+			{
+				"location": "Braddock Rd to Huntington and Van Dorn Street",
+				"description": "Single-tracking",
+				"startDate": "2017-01-02T00:00:00-05:00",
+				"endDate": "2017-01-13T23:59:59-05:00",
+				"stationsAffected": ["C12", "C13", "C14", "C15", "J02"],
+				"linesAffected": ["YL", "BL"]
+			},
+			{
+				"location": "Braddock Rd to Huntington and Van Dorn Street",
+				"description": "Single-tracking",
+				"startDate": "2017-01-22T22:00:00-05:00",
+				"endDate": "2017-02-03T23:59:59-05:00",
+				"stationsAffected": ["C12", "C13", "C14", "C15", "J02"],
+				"linesAffected": ["YL", "BL"]
+			},
+			{
+				"location": "East Falls Church to West Falls Church-VT/UVA",
+				"description": "Single-tracking",
+				"startDate": "2017-03-06T00:00:00-05:00",
+				"endDate": "2017-03-19T23:59:59-04:00",
+				"stationsAffected": ["K05", "K06"],
+				"linesAffected": ["OR", "SV"]
 			}
 		],
 
@@ -184,19 +205,41 @@
 		 * Finds events that affect a particular station (or stations).
 		 */
 		affectsStation: function(station) {
+			var isStationObject = false;
+			
 			if (station instanceof Array) {
 				station = station.map(function(item) {
-					return item.toUpperCase();
+					if (typeof station == 'object' && station.hasOwnProperty('Code')) {
+						if (!isStationObject) {
+							isStationObject = true;
+						}
+						return item;
+					} else {
+						return item.toUpperCase();
+					}
 				});
+			} else if (typeof station == 'object' && station.hasOwnProperty('Code')) {
+				isStationObject = true;
+				station = [station.Code];
 			} else {
 				station = [station.toUpperCase()];
 			}
 
 			return this.filterEvents(function(event) {
-				var c = station.length;
+				var s = station.length;
+				
+				while (s --) {
+					if (isStationObject) {
+						for (var l = 1, c; l < 5; l ++) {
+							if ((c = station[s]['LineCode' + l])) {
+								if (event.linesAffected.indexOf(c.toUpperCase()) > -1) {
+									return true;
+								}
+							}
+						}
+					}
 
-				while (c --) {
-					if (event.directlyAffectedStations.indexOf(station[c]) > -1) {
+					if (event.stationsAffected.indexOf(station[s]) > -1) {
 						return true;
 					}
 				}
@@ -210,7 +253,7 @@
 		 */
 		affectsLine: function(line) {
 			return this.filterEvents(function(event) {
-				return event.affectedLines.indexOf(line.toUpperCase()) > -1;
+				return event.linesAffected.indexOf(line.toUpperCase()) > -1;
 			});
 		},
 

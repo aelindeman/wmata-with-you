@@ -72,7 +72,12 @@
 
 		// Formats a date object and returns it in a human-readable format.
 		format_date: function(date, with_time) {
-			return Moment(date).format('MMMM Do' + (with_time ? ' h:mm A' : ''));
+			return Moment(date).format('MMM. Do' + (with_time ? ' h:mm A' : ''));
+		},
+		
+		// Returns the second argument if the first is equal to 1, or the third if it is not
+		plural: function(number, if_plural, if_not_plural) {
+			return number == 1 ? if_not_plural : if_plural;
 		},
 
 		// Un-abbreviates an arrival time and adds an appropriate suffix
