@@ -1,0 +1,59 @@
+sudo: false
+
+branches:
+  except:
+    - gh-pages
+
+language: python
+python:
+  - "2.7"
+node_js:
+  - "0.12"
+
+env:
+  - PEBBLE_SDK_VERSION=3.14
+
+before_install:
+  - wget https://github.com/pebble/pebble-tool/releases/download/v4.2.1/pebble-sdk-4.2.1-linux64.tar.bz2?source=travis
+  - mkdir -p ~/.pebble-sdk
+  - tar -jxf pebble-sdk-* -C ~/.pebble-sdk
+  - touch ~/.pebble-sdk/ENABLE_ANALYTICS
+  - export PEBBLE_SDK=~/.pebble-sdk/pebble-sdk-*
+  - export PEBBLE=$PEBBLE_SDK/bin/pebble
+  - export DEPLOY_TO=$DEPLOY_USER@$DEPLOY_SERVER:builds/wmata-with-you-$TRAVIS_BUILD_ID.pbw
+
+install:
+  - pushd $PEBBLE_SDK
+  - virtualenv --no-site-packages .env
+  - source .env/bin/activate
+  - pip install -r requirements.txt
+  - deactivate
+  - popd
+  - $PEBBLE sdk set-channel beta
+  - yes | $PEBBLE sdk install $PEBBLE_SDK_VERSION
+  - mkdir -p src/js/
+  - mv src/*.js src/js/
+  - git clone --single-branch https://github.com/pebble/pebblejs pebblejs
+  - cp -anv pebblejs/{resources,src,waftools,wscript} .
+  - npm install -g jshint mocha chai
+
+script:
+  - jshint --verbose --show-non-errors src/js/*.js
+#  - mocha test/tests.js
+  - $PEBBLE build
+
+after_script:
+  - git clean -fd
+
+before_deploy:
+  - eval "$(ssh-agent -s)"
+  - echo $DEPLOY_KEY > .travis/deploy.pem
+  - chmod 600 .travis/deploy.pem
+  - ssh-add .travis/deploy.pem
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: rsync -i .travis/deploy.pem -r --delete-after $TRAVIS_BUILD_DIR/build/wmata-with-you.pbw $DEPLOY_TO
+  on:
+    condition: $DEPLOY_ENABLED = true
