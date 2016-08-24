@@ -391,8 +391,8 @@ function get_query_param(variable, default_value) {
 // gathers configuration from the page
 function get_config_data() {
 	var options = {
-		'buses-first': buses_first_field.val(),
-		'closest-things': closest_things_field.val(),
+		'buses-first': parseInt(buses_first_field.val()),
+		'closest-things': parseInt(closest_things_field.val()),
 		'safetrack-warning': safetrack_warning_field.val(),
 		'selection-color': selection_color_field.val(),
 		'saved-bus': JSON.stringify(saved_bus),
