@@ -1,5 +1,7 @@
 # WMATA With You
 
+![Travis CI build health](https://travis-ci.org/aelindeman/wmata-with-you.svg)
+
 The Washington, D.C. Metro schedule for the Pebble smartwatch.
 
 Look up when the next train is at any nearby station, and check systemwide service advisories so you don't get stuck waiting.
