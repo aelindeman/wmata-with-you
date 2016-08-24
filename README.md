@@ -1,14 +1,14 @@
 # WMATA With You
 
+[![WMATA With You on the Pebble App Store](http://pblweb.com/badge/5404f8e0ec33d19e2200008b/orange/small)][store]
+
 [![Travis CI build health](https://travis-ci.org/aelindeman/wmata-with-you.svg)](https://travis-ci.org/aelindeman/wmata-with-you)
 
 The Washington, D.C. Metro schedule for the Pebble smartwatch.
 
 Look up when the next train is at any nearby station, and check systemwide service advisories so you don't get stuck waiting.
 
-[Available on the Pebble app store!](https://apps.getpebble.com/applications/5404f8e0ec33d19e2200008b)
-
-Written with [pebble.js](https://github.com/pebble/pebblejs). Uses the [WMATA Transparent Datasets API](http://developer.wmata.com/).
+Written with [pebble.js](https://github.com/pebble/pebblejs). Uses the [WMATA API](http://developer.wmata.com/).
 
 # Author
 
@@ -25,3 +25,5 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+[store]: https://apps.getpebble.com/applications/5404f8e0ec33d19e2200008b
