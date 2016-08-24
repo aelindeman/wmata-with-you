@@ -1,0 +1,15 @@
+sudo: false
+
+language: node_js
+node_js:
+  - "0.12"
+
+branches:
+  except:
+    - gh-pages
+
+before_script:
+  - npm install -g jshint
+
+script:
+  - jshint src/*.js
