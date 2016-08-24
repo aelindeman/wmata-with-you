@@ -1,6 +1,6 @@
 # WMATA With You
 
-![Travis CI build health](https://travis-ci.org/aelindeman/wmata-with-you.svg)
+[![Travis CI build health](https://travis-ci.org/aelindeman/wmata-with-you.svg)](https://travis-ci.org/aelindeman/wmata-with-you)
 
 The Washington, D.C. Metro schedule for the Pebble smartwatch.
 
