@@ -74,7 +74,7 @@
 		format_date: function(date, with_time) {
 			return Moment(date).format('MMM. Do' + (with_time ? ' h:mm a' : ''));
 		},
-		
+
 		// Returns the second argument if the first is equal to 1, or the third if it is not
 		plural: function(number, if_plural, if_not_plural) {
 			return number == 1 ? if_not_plural : if_plural;

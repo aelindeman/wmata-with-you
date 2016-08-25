@@ -1,0 +1,22 @@
+{
+	"name": "wmata-with-you",
+	"description": "The Washington, D.C. Metrorail and Metrobus schedule for the Pebble smartwatch.",
+	"author": "Alex Lindeman <hello@ael.me>",
+	"version": "2.4.0",
+	"homepage": "http://ael.me/wwy",
+	"repository": "https://github.com/aelindeman/wmata-with-you",
+	"license": "MIT",
+	"main": "src/app.js",
+	"files": [
+		"resources/",
+		"src/",
+		"test/"
+	],
+	"dependencies": {
+		"moment": "~2.11.0"
+	},
+	"devDependencies": {
+		"expect": "~1.20.0",
+		"mocha": "~3.0.0"
+	}
+}

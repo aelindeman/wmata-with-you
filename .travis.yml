@@ -10,6 +10,8 @@ branches:
 
 before_script:
   - npm install -g jshint
+  - npm install
 
 script:
   - jshint src/*.js
+  - mocha
