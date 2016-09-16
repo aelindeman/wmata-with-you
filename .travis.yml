@@ -37,7 +37,7 @@ install:
   - npm install -g jshint mocha chai
 
 script:
-  - jshint src/js/*.js
+  - jshint --verbose --show-non-errors src/js/*.js
 #  - mocha test/tests.js
   - $PEBBLE build
 
