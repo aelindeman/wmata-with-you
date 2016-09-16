@@ -56,4 +56,4 @@ deploy:
   skip_cleanup: true
   script: rsync -i .travis/deploy.pem -r --delete-after $TRAVIS_BUILD_DIR/build/wmata-with-you.pbw $DEPLOY_TO
   on:
-    branch: master
+    condition: $DEPLOY_ENABLED = true
