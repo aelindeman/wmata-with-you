@@ -14,7 +14,7 @@ env:
   - PEBBLE_SDK_VERSION=3.9
 
 before_install:
-  - wget https://github.com/pebble/pebble-tool/releases/download/v4.0-rc5/pebble-sdk-4.0-rc5-linux64.tar.bz2?source=travis
+  - wget https://github.com/pebble/pebble-tool/releases/download/v4.1/pebble-sdk-4.1-linux64.tar.bz2?source=travis
   - mkdir -p ~/.pebble-sdk
   - tar -jxf pebble-sdk-* -C ~/.pebble-sdk
   - touch ~/.pebble-sdk/ENABLE_ANALYTICS
@@ -32,7 +32,7 @@ install:
   - yes | $PEBBLE sdk install $PEBBLE_SDK_VERSION
   - mkdir -p src/js/
   - mv src/*.js src/js/
-  - git clone --single-branch https://github.com/pebble/pebblejs
+  - git clone --single-branch https://github.com/pebble/pebblejs pebblejs
   - cp -anv pebblejs/{resources,src,waftools,wscript} .
   - npm install -g jshint mocha chai
 
