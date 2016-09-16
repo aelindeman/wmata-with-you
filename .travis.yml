@@ -12,7 +12,7 @@ branches:
     - gh-pages
 
 before_install:
-  - wget https://github.com/pebble/pebble-tool/archive/v4.4.1.tar.gz?source=travis
+  - wget https://github.com/pebble/pebble-tool/releases/download/v4.2.1/pebble-sdk-4.2.1-linux64.tar.bz2?source=travis
   - mkdir -p ~/.pebble-sdk
   - tar -jxf pebble-sdk-* -C ~/.pebble-sdk
   - touch ~/.pebble-sdk/ENABLE_ANALYTICS
@@ -26,7 +26,6 @@ install:
   - pip install -r requirements.txt
   - deactivate
   - popd
-  - $PEBBLE sdk set-channel beta
   - yes | $PEBBLE sdk install $PEBBLE_SDK_VERSION
   - git clone --single-branch https://github.com/pebble/pebblejs
   - cp -anv pebblejs/{resources,src,waftools,wscript} .
