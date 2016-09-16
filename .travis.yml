@@ -34,11 +34,11 @@ install:
   - mv src/*.js src/js/
   - git clone --single-branch https://github.com/pebble/pebblejs
   - cp -anv pebblejs/{resources,src,waftools,wscript} .
-  - npm install -g pylint mocha chai
+  - npm install -g jshint mocha chai
 
 script:
-  - pylint src/js/app.js
-  - mocha test/tests.js
+  - jshint src/js/*.js
+#  - mocha test/tests.js
   - $PEBBLE build
 
 after_script:
