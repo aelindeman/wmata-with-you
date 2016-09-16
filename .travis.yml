@@ -47,13 +47,15 @@ after_script:
 
 before_deploy:
   - eval "$(ssh-agent -s)"
-  - echo $DEPLOY_KEY > .travis/deploy.pem
-  - chmod 600 .travis/deploy.pem
-  - ssh-add .travis/deploy.pem
+  - mkdir -p ~/.travis
+  - echo $DEPLOY_KEY > ~/.travis/deploy.pem
+  - chmod 600 ~/.travis/deploy.pem
+  - ssh-add ~/.travis/deploy.pem
 
 deploy:
   provider: script
   skip_cleanup: true
-  script: rsync -i .travis/deploy.pem -r --delete-after $TRAVIS_BUILD_DIR/build/wmata-with-you.pbw $DEPLOY_TO
+  script: rsync -i ~/.travis/deploy.pem -r --delete-after $TRAVIS_BUILD_DIR/build/wmata-with-you.pbw $DEPLOY_TO
   on:
+    all_branches: true
     condition: $DEPLOY_ENABLED = true
