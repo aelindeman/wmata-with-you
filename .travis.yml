@@ -18,7 +18,7 @@ before_install:
   - touch ~/.pebble-sdk/ENABLE_ANALYTICS
   - export PEBBLE_SDK=~/.pebble-sdk/pebble-sdk-*
   - export PEBBLE=$PEBBLE_SDK/bin/pebble
-  - if [[ `npm -v` != 3* ]]; then npm -i -g npm@3; fi
+  - if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
 
 install:
   - pushd $PEBBLE_SDK
