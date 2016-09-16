@@ -19,7 +19,7 @@ before_install:
   - tar -jxf pebble-sdk-* -C ~/.pebble-sdk
   - touch ~/.pebble-sdk/ENABLE_ANALYTICS
   - export PEBBLE_SDK=~/.pebble-sdk/pebble-sdk-*
-no  - export PEBBLE=$PEBBLE_SDK/bin/pebble
+  - export PEBBLE=$PEBBLE_SDK/bin/pebble
 
 install:
   - pushd $PEBBLE_SDK
