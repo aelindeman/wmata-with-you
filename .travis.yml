@@ -12,15 +12,16 @@ node_js:
 
 env:
   - PEBBLE_SDK_VERSION=3.14
+  - PEBBLE_SDK_VERSION=latest
 
 before_install:
-  - wget https://github.com/pebble/pebble-tool/releases/download/v4.2.1/pebble-sdk-4.2.1-linux64.tar.bz2?source=travis
+  - wget https://s3.amazonaws.com/assets.getpebble.com/pebble-tool/pebble-sdk-4.5-linux64.tar.bz2
   - mkdir -p ~/.pebble-sdk
   - tar -jxf pebble-sdk-* -C ~/.pebble-sdk
   - touch ~/.pebble-sdk/ENABLE_ANALYTICS
   - export PEBBLE_SDK=~/.pebble-sdk/pebble-sdk-*
   - export PEBBLE=$PEBBLE_SDK/bin/pebble
-  - export DEPLOY_TO=$DEPLOY_USER@$DEPLOY_SERVER:builds/wmata-with-you-$TRAVIS_BUILD_ID.pbw
+  - export PATH="$PATH:$(npm config get prefix)/.bin"
 
 install:
   - pushd $PEBBLE_SDK
@@ -31,31 +32,23 @@ install:
   - popd
   - $PEBBLE sdk set-channel beta
   - yes | $PEBBLE sdk install $PEBBLE_SDK_VERSION
+  - npm install --only=dev
+
+script:
+  - jshint --verbose --show-non-errors src/*.js
+  - npm test
+  - sed -i "s/__WMATA_API_KEY__/$WMATA_API_KEY/" src/urls.js
   - mkdir -p src/js/
   - mv src/*.js src/js/
   - git clone --single-branch https://github.com/pebble/pebblejs pebblejs
-  - cp -anv pebblejs/{resources,src,waftools,wscript} .
-  - npm install -g jshint mocha chai
-
-script:
-  - jshint --verbose --show-non-errors src/js/*.js
-#  - mocha test/tests.js
+  - cp -a -n pebblejs/{resources,src,waftools,wscript} .
   - $PEBBLE build
 
-after_script:
-  - git clean -fd
-
-before_deploy:
-  - eval "$(ssh-agent -s)"
-  - mkdir -p ~/.travis
-  - echo $DEPLOY_KEY > ~/.travis/deploy.pem
-  - chmod 600 ~/.travis/deploy.pem
-  - ssh-add ~/.travis/deploy.pem
-
 deploy:
-  provider: script
+  provider: releases
+  api_key: $GITHUB_DEPLOY_KEY
   skip_cleanup: true
-  script: rsync -i ~/.travis/deploy.pem -r --delete-after $TRAVIS_BUILD_DIR/build/wmata-with-you.pbw $DEPLOY_TO
+  file: build/wmata-with-you.pbw
   on:
-    all_branches: true
-    condition: $DEPLOY_ENABLED = true
+    branch: release
+    tags: true

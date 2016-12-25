@@ -58,8 +58,13 @@
 		// Also removes suffixes from alternate routes
 		concat_bus: function(stop) {
 			return stop.Routes
+				.map(function(s) {
+					return s.replace(/(c|c?vS?[0-9]+)$/, '');
+				})
+				.filter(function(el, i, self) {
+					return i == self.indexOf(el);
+				})
 				.join(' ')
-				.replace(/((\w+v[0-9]+)(,\s)?|(,\s)?(\w+v[0-9]))/g, '')
 				.toUpperCase();
 		},
 

@@ -11,7 +11,7 @@
 	}
 
 	Urls.prototype = {
-		key: 'tdzzks35mmn4qxjg9mxp324v',
+		key: '__WMATA_API_KEY__',
 		api: {
 
 			// WMATA API - bus endpoints
