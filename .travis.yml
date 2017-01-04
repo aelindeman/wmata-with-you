@@ -6,16 +6,16 @@ branches:
 
 language: python
 python:
-  - "2.7"
-node_js:
-  - "0.12"
+  - 2.7
 
 env:
   - PEBBLE_SDK_VERSION=3.14
   - PEBBLE_SDK_VERSION=latest
 
 before_install:
-  - wget https://s3.amazonaws.com/assets.getpebble.com/pebble-tool/pebble-sdk-4.5-linux64.tar.bz2
+  - nvm install 0.12
+  - nvm use 0.12
+  - wget https://github.com/pebble/pebble-tool/releases/download/v4.2.1/pebble-sdk-4.2.1-linux64.tar.bz2
   - mkdir -p ~/.pebble-sdk
   - tar -jxf pebble-sdk-* -C ~/.pebble-sdk
   - touch ~/.pebble-sdk/ENABLE_ANALYTICS
@@ -50,5 +50,4 @@ deploy:
   skip_cleanup: true
   file: build/wmata-with-you.pbw
   on:
-    branch: release
     tags: true
