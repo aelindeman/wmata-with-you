@@ -10,7 +10,6 @@ python:
 
 env:
   - PEBBLE_SDK_VERSION=3.14
-  - PEBBLE_SDK_VERSION=latest
 
 before_install:
   - nvm install 0.12
@@ -30,7 +29,6 @@ install:
   - pip install -r requirements.txt
   - deactivate
   - popd
-  - $PEBBLE sdk set-channel beta
   - yes | $PEBBLE sdk install $PEBBLE_SDK_VERSION
   - npm install --only=dev
 
