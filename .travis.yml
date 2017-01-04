@@ -15,7 +15,7 @@ env:
 before_install:
   - nvm install 0.12
   - nvm use 0.12
-  - wget https://github.com/pebble/pebble-tool/releases/download/v4.2.1/pebble-sdk-4.2.1-linux64.tar.bz2
+  - wget https://s3.amazonaws.com/assets.getpebble.com/pebble-tool/pebble-sdk-4.4-linux64.tar.bz2
   - mkdir -p ~/.pebble-sdk
   - tar -jxf pebble-sdk-* -C ~/.pebble-sdk
   - touch ~/.pebble-sdk/ENABLE_ANALYTICS
@@ -30,7 +30,6 @@ install:
   - pip install -r requirements.txt
   - deactivate
   - popd
-  - $PEBBLE sdk set-channel beta
   - yes | $PEBBLE sdk install $PEBBLE_SDK_VERSION
   - npm install --only=dev
 
