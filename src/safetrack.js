@@ -109,45 +109,29 @@
 		 * Finds events that affect a particular station (or stations).
 		 */
 		affectsStation: function(station) {
-			var isStationObject = false;
-			
+			var stations = [];
+
 			if (station instanceof Array) {
-				station = station.map(function(item) {
-					if (typeof station == 'object' && station.hasOwnProperty('Code')) {
-						if (!isStationObject) {
-							isStationObject = true;
-						}
-						return item;
+				stations = station.map(function(item) {
+					if (typeof item == 'object' && item.hasOwnProperty('Code')) {
+						return item.Code;
 					} else {
-						return item.toUpperCase();
+						return item;
 					}
 				});
 			} else if (typeof station == 'object' && station.hasOwnProperty('Code')) {
-				isStationObject = true;
-				station = [station.Code];
+				stations = [station.Code];
 			} else {
-				station = [station.toUpperCase()];
+				stations = [station];
 			}
 
 			return this.filterEvents(function(event) {
-				var s = station.length;
-				
+				var s = stations.length;
 				while (s --) {
-					if (isStationObject) {
-						for (var l = 1, c; l < 5; l ++) {
-							if ((c = station[s]['LineCode' + l])) {
-								if (event.linesAffected.indexOf(c.toUpperCase()) > -1) {
-									return true;
-								}
-							}
-						}
-					}
-
-					if (event.stationsAffected.indexOf(station[s]) > -1) {
+					if (event.stationsAffected.indexOf(stations[s].toUpperCase()) > -1) {
 						return true;
 					}
 				}
-
 				return false;
 			});
 		},
