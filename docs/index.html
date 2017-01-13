@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>WMATA With You &mdash; Settings</title>
+		<meta charset="utf-8" />
+		<meta name="author" content="Alex Lindeman" />
+		<meta name="created" content="2015-11-02" />
+		<meta name="version" content="1.1.1" />
+		<meta name="description" content="The configuration page for WMATA With You, a Pebble smartwatch app for public transport in and around Washington, D.C., available at https://apps.getpebble.com/applications/5404f8e0ec33d19e2200008b" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css" />
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.0.0/awesomplete.min.css" />
+		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,500,700" />
+		<link rel="stylesheet" type="text/css" href="styles.css" />
+	</head>
+	<body>
+		<main class="page">
+			<noscript>You&rsquo;re going to need to enable Javascript to do anything here.</noscript>
+			<header>
+				<h1>WMATA With You <span class="subtitle">Settings</span></h1>
+			</header>
+			<section class="menus">
+				<h2><em>Nearby</em> menu</h2>
+				<article>
+					<h3 class="hidden">Preferred mode of transit</h3>
+					<p>Show <select id="buses-first" name="buses-first"><option value="0">trains</option><option value="1">buses</option></select> first</p>
+				</article>
+				<article>
+					<h3 class="hidden">Number of closest things</h3>
+					<p>Show <input id="closest-things" name="closest-things" type="number" min="2" max="20" required="required" style="width: 3em" /> of the closest rail stations &amp; bus stops (each)</p>
+				</article>
+				<article>
+					<h3 class="hidden">SafeTrack warning days</h3>
+					<p>Show SafeTrack rebuilding advisories for <input id="safetrack-warning" type="number" min="0" max="60" required="required" style="width: 3em"/> days in advance</p>
+				</article>
+				<article>
+					<h3 class="hidden">High contrast mode</h3>
+					<p>Use <span id="selection-color-preview" class="cadetBlue"><span class="hidden">&#x25a0;</span></span><select id="selection-color" name="selection-color"><option value="cadetBlue" class="cadetBlue" selected="selected">blue</option><option value="midnightGreen" class="midnightGreen">darker blue</option><option value="black" class="black">black</option></select> as the highlight color in menus</p>
+				</article>
+			</section>
+			<section>
+				<h2>Saved rail stations</h2>
+				<article>
+					<div class="top-bar">
+						<input type="text" id="add-saved-rail-field" class="input-text rail awesomeplete" placeholder="Add a station" autocomplete="off" /><input type="button" id="add-saved-rail-button" class="button input-endcap" title="add" value="+" />
+					</div>
+					<div>
+						<ul class="saved-list" id="saved-rail"></ul>
+					</div>
+				</article>
+			</section>
+			<section>
+				<h2>Saved bus stops</h2>
+				<article>
+					<div class="top-bar">
+						<input type="text" id="add-saved-bus-field" class="input-text bus awesomeplete" placeholder="Add a stop" autocomplete="off" /><input type="button" id="add-saved-bus-button" class="button input-endcap" title="add" value="+" />
+					</div>
+					<div>
+						<ul class="saved-list" id="saved-bus"></ul>
+					</div>
+				</article>
+			</section>
+			<section class="buttons">
+				<article>
+					<input type="button" id="do-discard" name="do" value="Discard changes" class="button discard-button" />
+					<input type="submit" id="do-submit" name="do" value="Save" class="button save-button" />
+				</article>
+			</section>
+		</main>
+		<footer>
+			<input type="button" id="do-defaults" name="do" value="Clear settings" class="button defaults-button" />
+		</footer>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.0.0/awesomplete.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jade/1.11.0/runtime.min.js"></script>
+		<script type="text/javascript" src="jade/saved-list-item.js"></script>
+		<script type="text/javascript" src="scripts.js"></script>
+	</body>
+</html>
