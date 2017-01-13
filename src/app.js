@@ -555,9 +555,9 @@
 	function load_about() {
 		var about_card = new UI.Card({
 			body: 'WMATA With You\n' +
-				'version 2.4\n' +
+				'version 2.5\n' +
 				'by Alex Lindeman\n\n' +
-				'Built with Pebble.js and the WMATA Transparent Datasets API.',
+				'Built with Pebble.js and the WMATA API.',
 			scrollable: true
 		});
 		about_card.show();
