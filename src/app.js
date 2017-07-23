@@ -17,8 +17,7 @@
 
 	// WMATA With You dependencies
 	var Urls = require('urls.js'),
-		Helpers = require('helpers.js'),
-		Safetrack = require('safetrack.js');
+		Helpers = require('helpers.js');
 
 	// Return a configuration item, with optional default value if unset
 	function config(key, def) {
@@ -258,7 +257,7 @@
 			});
 
 		trains_list.show();
-		
+
 		var offset = 0;
 
 		new Ajax({
@@ -375,24 +374,8 @@
 				style: 'small'
 			});
 
-		card.show();
-		
-		var st_station = Safetrack.affectsStation(station.Code).filter(function(e, i) {
-				return Safetrack.isSoon(e, config('safetrack-warning', 7));
-			}),
-			s = st_station.length;
-		
-		if (s > 0) {
-			var st_plans = 'SafeTrack rebuilding:\n';
-			while (s --) {
-				var e = st_station[s];
-				st_plans = st_plans + e.description + ' from ' + Helpers.format_date(e.startDate) + ' to ' + Helpers.format_date(e.endDate) + '\n\n';
-			}
-			
-			body = st_plans + body;
-		}
-		
 		card.body(body);
+		card.show();
 
 		new Ajax({
 			url: station_info_url,
@@ -471,9 +454,6 @@
 				sections: [{
 					title: 'Advisories',
 					items: [{ title: 'Loading...' }]
-				}, {
-					title: 'SafeTrack rebuilding',
-					items: [{ title: 'Loading...' }]
 				}]
 			});
 
@@ -506,46 +486,14 @@
 			card.show();
 		});
 
-		var st_lookahead = config('safetrack-warning', 7),
-			st_events = Safetrack.affectsSoon(st_lookahead),
-			s = st_events.length;
-
-		if (s > 0) {
-			while (s --) {
-				incidents.item(1, s, {
-					title: st_events[s].description,
-					subtitle: (new Date(st_events[s].startDate) > new Date() ?
-						'Starts ' + Helpers.format_date(st_events[s].startDate) :
-						'Ends ' + Helpers.format_date(st_events[s].endDate)),
-					info: st_events[s]
-				});
-			}
-		} else {
-			incidents.item(1, 0, {
-				title: 'None scheduled',
-				subtitle: 'for next ' + String(st_lookahead) + Helpers.plural(st_lookahead, ' days', ' day')
-			});
-		}
-
 		incidents.on('select', function (e) {
 			if (e.item.hasOwnProperty('info')) {
 				var card = new UI.Card({
 					scrollable: true
 				});
-				
-				switch (e.sectionIndex) {
-					case 0:
-						card.title(e.item.info.IncidentType);
-						card.body(e.item.info.Description);
-						break;
-					case 1:
-						card.title(st_events[e.itemIndex].description);
-						card.body('From ' + e.item.info.location + '\n\n' +
-							'Starts ' + Helpers.format_date(e.item.info.startDate, true) + '\n' +
-							'Ends ' + Helpers.format_date(e.item.info.endDate, true));
-						break;
-				}
-				
+
+				card.title(e.item.info.IncidentType);
+				card.body(e.item.info.Description);
 				card.show();
 			}
 		});
@@ -555,7 +503,7 @@
 	function load_about() {
 		var about_card = new UI.Card({
 			body: 'WMATA With You\n' +
-				'version 2.5\n' +
+				'version 2.6\n' +
 				'by Alex Lindeman\n\n' +
 				'Built with Pebble.js and the WMATA API.',
 			scrollable: true

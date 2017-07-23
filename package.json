@@ -1,6 +1,6 @@
 {
   "name": "wmata-with-you",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "A Pebble smartwatch app for the Washington, D.C. Metro",
   "main": "app.js",
   "directories": {
